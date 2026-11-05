@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>رفيق الزراعة | AgriLearn — منصة التعليم الزراعي الذكية</title>
+<meta name="description" content="رفيق الزراعة (AgriLearn): منصة تفاعلية لطلاب الزراعة والمزارعين — مختبرات ذكية، اختبارات تحدي، ومساعد ذكاء اصطناعي. تصميم Ziad Ashraf.">
+<meta name="author" content="Ziad Ashraf">
+<meta name="theme-color" content="#07130D">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+/* =====================================================================
+   رفيق الزراعة | AgriLearn — نظام التصميم الكامل
+   التصميم والتطوير: Ziad Ashraf — واتساب: +20 109 971 3432
+   ===================================================================== */
+
+/* ---------- 1) المتغيرات والألوان ---------- */
+:root{
+  --emerald:#0F5132; --emerald-deep:#0A3B24;
+  --mint:#20C997; --mint-soft:rgba(32,201,151,.14);
+  --gold:#FFC107; --gold-soft:rgba(255,193,7,.12);
+  --danger:#EF4444;
+  --bg:#07130D; --bg-2:#0A1B12; --card:#0E231A; --card-2:#133024;
+  --text:#EAF6F0; --muted:#9CBFAD;
+  --border:rgba(32,201,151,.16); --border-strong:rgba(32,201,151,.38);
+  --shadow:0 14px 40px rgba(0,0,0,.35);
+  --glow:0 0 26px rgba(32,201,151,.28);
+  --radius:20px; --header-h:66px;
+  --grad-main:linear-gradient(135deg,#0F5132,#20C997);
+  --grad-gold:linear-gradient(135deg,#FFC107,#FF9800);
+}
+[data-theme="light"]{
+  --bg:#F2FAF5; --bg-2:#E6F3EA; --card:#FFFFFF; --card-2:#EFF8F2;
+  --text:#0B291B; --muted:#537464;
+  --border:rgba(15,81,50,.14); --border-strong:rgba(15,81,50,.32);
+  --shadow:0 14px 34px rgba(15,81,50,.12);
+  --glow:0 8px 26px rgba(32,201,151,.22);
+}
+[data-theme="dark"]{color-scheme:dark}
+[data-theme="light"]{color-scheme:light}
+
+/* ---------- 2) الأساسيات ---------- */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden;transition:background .3s,color .3s}
+::selection{background:var(--mint);color:#06231A}
+img{max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+:focus-visible{outline:2px solid var(--mint);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+.container{width:min(1180px,94%);margin-inline:auto}
+section{padding:64px 0;scroll-margin-top:calc(var(--header-h) + 12px);position:relative}
+::-webkit-scrollbar{width:10px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--emerald);border-radius:99px}
+::-webkit-scrollbar-track{background:var(--bg-2)}
+.no-scrollbar::-webkit-scrollbar{display:none}
+.no-scrollbar{scrollbar-width:none}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+
+/* ظهور العناصر عند التمرير */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- 3) الهيدر ---------- */
+header{position:fixed;inset-inline:0;top:0;z-index:900;height:var(--header-h);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(7,19,13,.82);border-bottom:1px solid var(--border);transition:background .3s}
+[data-theme="light"] header{background:rgba(242,250,245,.85)}
+.header-inner{height:100%;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.brand-logo{width:42px;height:42px;border-radius:13px;background:var(--grad-main);display:grid;place-items:center;font-size:19px;color:#fff;box-shadow:var(--glow)}
+.brand-text strong{display:block;font-size:17px;font-weight:800;line-height:1.25}
+.brand-text small{font-size:10.5px;color:var(--muted);letter-spacing:2.5px;font-weight:700}
+.main-nav{display:flex;gap:4px;margin-inline-start:auto}
+.main-nav a{padding:8px 14px;border-radius:12px;font-weight:700;font-size:14.5px;color:var(--muted);transition:.25s}
+.main-nav a:hover{color:var(--text);background:var(--mint-soft)}
+.header-actions{display:flex;align-items:center;gap:8px;margin-inline-start:auto}
+.icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);display:grid;place-items:center;font-size:15px;transition:.25s}
+.icon-btn:hover{border-color:var(--mint);color:var(--mint);box-shadow:var(--glow)}
+.designer-chip{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:99px;background:linear-gradient(135deg,rgba(255,193,7,.16),rgba(32,201,151,.14));border:1px solid rgba(255,193,7,.4);font-size:12.5px;font-weight:800;color:var(--gold);white-space:nowrap}
+
+/* ---------- 4) الأزرار والشرائح ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 26px;border-radius:15px;font-weight:800;font-size:15.5px;transition:.25s;border:1px solid transparent;min-height:48px}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--grad-main);color:#fff;box-shadow:var(--glow)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(32,201,151,.4)}
+.btn-outline{border-color:var(--border-strong);color:var(--text)}
+.btn-outline:hover{border-color:var(--mint);color:var(--mint);background:var(--mint-soft)}
+.btn-gold{background:var(--grad-gold);color:#3D2C00;box-shadow:0 8px 24px rgba(255,193,7,.25)}
+.btn-gold:hover{transform:translateY(-2px)}
+.btn-block{width:100%}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:99px;border:1px solid var(--border);background:var(--card);font-size:13.5px;font-weight:700;color:var(--muted);transition:.25s;white-space:nowrap}
+button.chip:hover{border-color:var(--mint);color:var(--text)}
+.chip.active{background:var(--grad-main);color:#fff;border-color:transparent;box-shadow:var(--glow)}
+
+/* ---------- 5) الهيرو ---------- */
+.hero{padding:calc(var(--header-h) + 46px) 0 48px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:-1;background:radial-gradient(600px 320px at 85% -10%,rgba(32,201,151,.16),transparent 70%),radial-gradient(520px 300px at 8% 18%,rgba(255,193,7,.08),transparent 70%)}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;z-index:-1;animation:float 9s ease-in-out infinite}
+.blob-1{width:300px;height:300px;background:rgba(32,201,151,.25);top:8%;inset-inline-start:-80px}
+.blob-2{width:260px;height:260px;background:rgba(15,81,50,.55);bottom:6%;inset-inline-end:-60px;animation-delay:-4s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-26px)}}
+.hero-inner{display:grid;gap:34px}
+@media(min-width:992px){.hero-inner{grid-template-columns:1.08fr .92fr;align-items:center}}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:99px;background:var(--mint-soft);border:1px solid var(--border-strong);color:var(--mint);font-weight:700;font-size:13px;margin-bottom:18px}
+.hero-title{font-size:clamp(29px,6vw,52px);font-weight:900;line-height:1.4}
+.grad-text{background:linear-gradient(90deg,#20C997,#7CE7B8 55%,#FFC107);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{color:var(--muted);font-size:clamp(15px,2.4vw,18px);margin:16px 0 24px;max-width:560px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+.designer-pill{display:inline-flex;align-items:center;gap:8px;margin-top:22px;padding:9px 16px;border-radius:99px;border:1px dashed rgba(255,193,7,.5);color:var(--gold);font-size:13px;font-weight:700;background:var(--gold-soft)}
+/* بطاقة مؤشرات المزرعة (ديسكتوب) */
+.hero-visual{position:relative;display:none}
+@media(min-width:992px){.hero-visual{display:block}}
+.dash-card{background:var(--card);border:1px solid var(--border-strong);border-radius:22px;padding:22px;box-shadow:var(--shadow)}
+.dash-head{display:flex;gap:9px;align-items:center;font-weight:800;font-size:13.5px;margin-bottom:14px}
+.live-dot{width:9px;height:9px;border-radius:50%;background:var(--mint);box-shadow:0 0 10px var(--mint);animation:pulse 1.8s infinite}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+.dash-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed var(--border)}
+.dash-row>i{width:36px;height:36px;border-radius:11px;background:var(--mint-soft);color:var(--mint);display:grid;place-items:center;flex-shrink:0}
+.dr-info{flex:1;min-width:0}
+.dr-info span{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.dr-info b{font-size:14.5px}
+.dr-bar{width:90px;height:7px;border-radius:99px;background:var(--card-2);overflow:hidden;flex-shrink:0}
+.dr-bar span{display:block;height:100%;border-radius:99px;background:var(--grad-main)}
+.dash-chart{display:flex;gap:8px;align-items:flex-end;height:88px;margin-top:18px}
+.dash-chart span{flex:1;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,var(--mint),rgba(32,201,151,.15));height:var(--h);animation:grow 1.2s ease both}
+.dash-chart span:nth-child(2n){background:linear-gradient(180deg,var(--gold),rgba(255,193,7,.12))}
+@keyframes grow{from{height:0}}
+.float-chip{position:absolute;display:flex;gap:8px;align-items:center;padding:10px 15px;border-radius:99px;background:var(--card);border:1px solid var(--border-strong);font-size:12.5px;font-weight:800;box-shadow:var(--shadow);animation:float 6s ease-in-out infinite;white-space:nowrap}
+.fc-1{top:-18px;inset-inline-start:-24px;color:var(--mint)}
+.fc-2{bottom:-16px;inset-inline-end:-18px;color:var(--gold);animation-delay:-3s}
+/* عدّادات الإحصائيات */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:38px}
+@media(min-width:768px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px 12px;text-align:center;box-shadow:var(--shadow)}
+.stat-icon{width:46px;height:46px;margin:0 auto 10px;border-radius:14px;background:var(--mint-soft);color:var(--mint);display:grid;place-items:center;font-size:19px;border:1px solid var(--border)}
+.stat-card:nth-child(2) .stat-icon{color:var(--gold);background:var(--gold-soft);border-color:rgba(255,193,7,.3)}
+.stat-num{display:block;font-size:clamp(22px,4vw,30px);font-weight:900}
+.stat-label{font-size:13px;color:var(--muted);font-weight:700}
+/* شريط الإعلانات المتحرك */
+.ticker{border-block:1px solid var(--border);background:var(--bg-2);padding:12px 0;overflow:hidden;direction:ltr}
+.ticker-track{display:flex;gap:44px;width:max-content;animation:tick 30s linear infinite}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes tick{to{transform:translateX(-50%)}}
+.tick-item{display:flex;align-items:center;gap:9px;white-space:nowrap;font-weight:700;font-size:13.5px;color:var(--muted);direction:rtl}
+.tick-item i{color:var(--mint)}
+.tick-item i.gold{color:var(--gold)}
+
+/* ---------- 6) ترويسة الأقسام ---------- */
+.section-head{text-align:center;max-width:660px;margin:0 auto 40px}
+.section-icon{width:54px;height:54px;border-radius:16px;background:var(--grad-main);display:grid;place-items:center;font-size:22px;color:#fff;margin:0 auto 14px;box-shadow:var(--glow)}
+.section-head h2{font-size:clamp(24px,4.5vw,34px);font-weight:900}
+.section-head p{color:var(--muted);margin-top:8px}
+
+/* ---------- 7) قسم الكورسات (حالة فارغة أنيقة) ---------- */
+.dept-chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
+.dept-chip{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:99px;border:1px solid var(--border);background:var(--card);font-size:13.5px;font-weight:700;color:var(--muted);opacity:.9}
+.dept-chip i{color:var(--mint)}
+.dept-chip .soon{font-size:10.5px;background:var(--gold-soft);color:var(--gold);padding:2px 9px;border-radius:99px;border:1px solid rgba(255,193,7,.35)}
+.empty-state{max-width:580px;margin:0 auto;text-align:center;padding:52px 26px;position:relative;overflow:hidden}
+.empty-state::before{content:'';position:absolute;inset:0;background:radial-gradient(420px 200px at 50% 0%,rgba(32,201,151,.12),transparent 70%);pointer-events:none}
+.empty-icon{width:92px;height:92px;margin:0 auto 20px;border-radius:28px;background:var(--grad-main);display:grid;place-items:center;font-size:38px;color:#fff;box-shadow:var(--glow);animation:bob 3.2s ease-in-out infinite;position:relative}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.empty-state h3{font-size:22px;font-weight:900;margin-bottom:10px;position:relative}
+.empty-state p{color:var(--muted);max-width:420px;margin:0 auto 22px;position:relative}
+.empty-features{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:24px;position:relative}
+.empty-note{font-size:13px;color:var(--muted);margin-top:16px}
+.empty-note a{color:var(--gold);font-weight:800;border-bottom:1px dashed rgba(255,193,7,.5)}
+
+/* ---------- 8) المختبرات الذكية ---------- */
+#labs,#community{background:var(--bg-2)}
+.lab-tabs{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:26px}
+.lab-tab{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:14px;border:1px solid var(--border);background:var(--card);font-size:14px;font-weight:800;color:var(--muted);transition:.25s;white-space:nowrap;flex-shrink:0}
+.lab-tab i{font-size:15px}
+.lab-tab:hover{border-color:var(--mint);color:var(--text)}
+.lab-tab.active{background:var(--grad-main);color:#fff;border-color:transparent;box-shadow:var(--glow)}
+.lab-panel{display:none;animation:fadeUp .45s ease}
+.lab-panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.panel-card{padding:24px}
+@media(min-width:768px){.panel-card{padding:30px}}
+.panel-title{display:flex;align-items:center;gap:11px;font-size:19px;font-weight:900;margin-bottom:6px}
+.panel-title i{color:var(--mint)}
+.panel-desc{color:var(--muted);font-size:14px;margin-bottom:22px}
+/* النماذج والسلايدرز */
+.form-grid{display:grid;gap:18px}
+@media(min-width:768px){.form-grid.cols-2{grid-template-columns:1fr 1fr}}
+.field label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:800;font-size:14px;margin-bottom:10px}
+.field .val{color:var(--mint);font-weight:900;font-size:13.5px;background:var(--mint-soft);padding:2px 10px;border-radius:99px;border:1px solid var(--border)}
+.select{width:100%;padding:12px 14px;border-radius:13px;border:1px solid var(--border);background:var(--card-2);color:var(--text);font-family:inherit;font-weight:700;font-size:14.5px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:7px;border-radius:99px;background:linear-gradient(to left,var(--mint) var(--fill,0%),var(--card-2) var(--fill,0%));outline:none;border:1px solid var(--border);margin-top:6px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:21px;height:21px;border-radius:50%;background:#fff;border:5px solid var(--mint);box-shadow:0 0 10px rgba(32,201,151,.5);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:21px;height:21px;border-radius:50%;background:#fff;border:5px solid var(--mint);box-shadow:0 0 10px rgba(32,201,151,.5);cursor:pointer}
+input[type=range]::-moz-range-progress{background:var(--mint);height:7px;border-radius:99px}
+/* نتائج الحاسبة */
+.npk-results{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+@media(max-width:560px){.npk-results{grid-template-columns:1fr}}
+.result-card{background:var(--card-2);border:1px solid var(--border);border-radius:16px;padding:16px;text-align:center}
+.result-card .r-icon{font-size:20px;margin-bottom:7px;color:var(--mint)}
+.result-card h5{font-size:13px;color:var(--muted);font-weight:700}
+.result-card .r-val{font-size:26px;font-weight:900}
+.result-card small{color:var(--muted);font-size:12px}
+.npk-need{margin-top:16px;font-size:13px;color:var(--muted);font-weight:700;text-align:center}
+.npk-need b{color:var(--gold)}
+.npk-note{margin-top:12px;padding:13px 16px;border-radius:13px;background:var(--gold-soft);border:1px solid rgba(255,193,7,.28);font-size:13.5px;display:flex;gap:10px;align-items:flex-start}
+.npk-note i{color:var(--gold);margin-top:4px}
+/* دورة النيتروجين */
+.cycle-wrap{display:grid;gap:24px}
+@media(min-width:992px){.cycle-wrap{grid-template-columns:1.05fr .95fr;align-items:center}}
+.cycle-diagram{position:relative;max-width:430px;margin:54px auto;aspect-ratio:1;width:calc(100% - 12px)}
+.cycle-ring{position:absolute;inset:5%;border:2px dashed var(--border-strong);border-radius:50%;animation:spin 36s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cycle-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:33%;aspect-ratio:1;border-radius:50%;background:var(--grad-main);display:grid;place-items:center;color:#fff;font-weight:900;font-size:clamp(13px,2.6vw,16px);text-align:center;box-shadow:var(--glow);padding:6px;line-height:1.4}
+.cyc-node{position:absolute;width:clamp(68px,22%,96px);aspect-ratio:1;border-radius:50%;background:var(--card-2);border:2px solid var(--border-strong);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11.5px;font-weight:800;color:var(--muted);transition:.3s;transform:translate(-50%,-50%);padding:6px;text-align:center;line-height:1.25}
+.cyc-node i{font-size:clamp(16px,4vw,23px);color:var(--mint);transition:.3s}
+.cyc-node:hover{border-color:var(--mint)}
+.cyc-node.active{border-color:var(--gold);color:var(--text);background:var(--card);box-shadow:0 0 0 6px rgba(255,193,7,.14),var(--glow)}
+.cyc-node.active i{color:var(--gold);transform:scale(1.12)}
+.cyc-node[data-stage="fix"]{top:0;left:50%}
+.cyc-node[data-stage="nitr"]{top:50%;left:100%}
+.cyc-node[data-stage="uptake"]{top:100%;left:50%}
+.cyc-node[data-stage="return"]{top:50%;left:0}
+.cyc-info{background:var(--card-2);border:1px solid var(--border);border-radius:16px;padding:20px;min-height:170px}
+.cyc-info-head{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.cyc-info-head>i{width:44px;height:44px;border-radius:13px;background:var(--mint-soft);color:var(--mint);display:grid;place-items:center;font-size:19px;flex-shrink:0}
+.cyc-info h4{font-weight:900;font-size:17px}
+.cyc-tag{display:inline-block;font-size:11px;color:var(--mint);background:var(--mint-soft);padding:3px 10px;border-radius:99px;border:1px solid var(--border);margin-top:3px}
+.cyc-info p{color:var(--muted);font-size:14.5px}
+/* تشخيص الأمراض */
+.dropzone{border:2px dashed var(--border-strong);border-radius:18px;padding:38px 20px;text-align:center;transition:.3s;cursor:pointer;background:var(--card-2)}
+.dropzone:hover,.dropzone.drag{border-color:var(--mint);background:var(--mint-soft)}
+.dz-icon{width:70px;height:70px;border-radius:22px;background:var(--grad-main);color:#fff;display:grid;place-items:center;font-size:28px;margin:0 auto 14px}
+.dz-title{font-weight:900;font-size:17px}
+.dz-hint{color:var(--muted);font-size:13px;margin-top:6px}
+.preview-wrap{display:none;margin-top:18px}
+.preview-img{max-height:260px;width:auto;max-width:100%;border-radius:14px;margin-inline:auto;display:block;border:1px solid var(--border)}
+.scan-progress{height:10px;border-radius:99px;background:var(--card-2);overflow:hidden;margin-top:14px;border:1px solid var(--border)}
+.scan-fill{height:100%;width:0;background:var(--grad-main);transition:width .35s;border-radius:99px}
+.scan-status{font-size:13px;color:var(--muted);margin-top:8px;font-weight:700;min-height:20px}
+.diag-result{display:none;margin-top:20px;padding:20px;border-radius:16px;border:1px solid var(--border);background:var(--card-2);animation:fadeUp .4s}
+.diag-head{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.conf-ring{width:88px;height:88px;border-radius:50%;display:grid;place-items:center;position:relative;flex-shrink:0}
+.conf-ring::after{content:'';position:absolute;inset:7px;background:var(--card-2);border-radius:50%}
+.conf-ring span{position:relative;z-index:1;font-weight:900;font-size:17px}
+.diag-name{font-weight:900;font-size:18px}
+.diag-sev-label{font-size:13px;color:var(--muted);margin-top:4px}
+.diag-sev-label b{color:var(--text)}
+.sev-bar{height:8px;border-radius:99px;background:var(--card);overflow:hidden;margin-top:7px;border:1px solid var(--border)}
+.sev-fill{height:100%;border-radius:99px;transition:width .8s}
+.tips{margin-top:14px;list-style:none;display:grid;gap:8px}
+.tips li{display:flex;gap:9px;align-items:flex-start;font-size:14px;color:var(--muted)}
+.tips li i{color:var(--mint);margin-top:5px}
+.diag-note{font-size:12px;color:var(--muted);margin-top:14px;opacity:.85;display:flex;gap:7px;align-items:flex-start}
+.diag-note i{margin-top:4px;color:var(--gold)}
+
+/* ---------- 9) ساحة التحدي (Quiz) ---------- */
+.quiz-shell{max-width:740px;margin:0 auto}
+.quiz-card{padding:26px}
+@media(min-width:768px){.quiz-card{padding:34px}}
+.quiz-hero-ic{font-size:46px;margin-bottom:8px}
+.quiz-card h3{font-size:22px;font-weight:900}
+.quiz-cats{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:22px 0}
+.best-banner{display:inline-flex;gap:8px;align-items:center;padding:10px 18px;border-radius:13px;background:var(--gold-soft);border:1px solid rgba(255,193,7,.35);color:var(--gold);font-weight:800;font-size:13.5px;margin-top:18px;text-align:center}
+.q-progress{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.q-count{font-weight:900;color:var(--mint);font-size:15px}
+.q-dots{display:flex;gap:6px;flex-wrap:wrap}
+.q-dot{width:10px;height:10px;border-radius:99px;background:var(--card-2);border:1px solid var(--border)}
+.q-dot.done{background:var(--mint);border-color:transparent}
+.q-dot.bad{background:var(--danger);border-color:transparent}
+.q-dot.now{background:var(--gold);border-color:transparent;box-shadow:0 0 8px rgba(255,193,7,.6)}
+.q-timer{display:flex;align-items:center;gap:8px;margin-inline-start:auto;font-weight:900;color:var(--mint);font-size:15px}
+.q-timer.urgent{color:var(--danger);animation:pulse 1s infinite}
+.q-timer-bar{height:7px;border-radius:99px;background:var(--card-2);overflow:hidden;margin-bottom:18px;border:1px solid var(--border)}
+.q-timer-fill{height:100%;width:100%;background:var(--mint);border-radius:99px;transition:width 1s linear,background .3s}
+.q-cat-badge{display:inline-flex;gap:7px;align-items:center;padding:6px 14px;border-radius:99px;background:var(--mint-soft);color:var(--mint);font-size:12px;font-weight:800;border:1px solid var(--border);margin-bottom:12px}
+.q-text{font-size:clamp(17px,3vw,21px);font-weight:900;line-height:1.65;margin-bottom:20px}
+.q-opts{display:grid;gap:11px}
+.q-opt{display:flex;align-items:center;gap:12px;width:100%;text-align:start;padding:12px 16px;border-radius:14px;border:1.5px solid var(--border);background:var(--card-2);font-size:15px;font-weight:700;transition:.2s;color:var(--text);min-height:54px}
+.q-opt:not(:disabled):hover{border-color:var(--mint);transform:translateX(-3px)}
+.opt-letter{width:32px;height:32px;border-radius:10px;background:var(--mint-soft);color:var(--mint);display:grid;place-items:center;font-weight:900;flex-shrink:0;font-size:13.5px}
+.q-opt.correct{border-color:#22C55E;background:rgba(34,197,94,.12)}
+.q-opt.correct .opt-letter{background:#22C55E;color:#04250F}
+.q-opt.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);animation:shake .4s}
+.q-opt.wrong .opt-letter{background:var(--danger);color:#fff}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(5px)}75%{transform:translateX(-5px)}}
+.q-explain{display:none;margin-top:16px;padding:14px 16px;border-radius:13px;border:1px solid var(--border-strong);background:var(--mint-soft);font-size:14px}
+.q-explain.show{display:flex;gap:10px}
+.q-explain i{color:var(--gold);margin-top:4px;flex-shrink:0}
+.q-next-wrap{display:flex;justify-content:flex-end;margin-top:16px}
+.ring-wrap{display:grid;place-items:center;margin-bottom:16px}
+.score-ring{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(var(--mint) 0%,rgba(128,128,128,.18) 0)}
+.score-ring::after{content:'';position:absolute;inset:12px;background:var(--card);border-radius:50%}
+.sr-in{position:relative;z-index:1;text-align:center}
+.sr-in b{font-size:34px;font-weight:900;display:block;line-height:1.2}
+.sr-in small{color:var(--muted);font-weight:700;font-size:12.5px}
+.result-chips{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:20px 0}
+@media(min-width:560px){.result-chips{grid-template-columns:repeat(4,1fr)}}
+.rc{background:var(--card-2);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center}
+.rc b{display:block;font-size:20px;font-weight:900}
+.rc span{font-size:12px;color:var(--muted);font-weight:700}
+.review-title{font-weight:900;margin:18px 0 4px;font-size:15.5px}
+.review-list{display:grid;gap:12px;margin-top:8px;text-align:start}
+.review-item{background:var(--card-2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;font-size:14px;border-inline-start-width:4px}
+.review-item.good{border-inline-start-color:#22C55E}
+.review-item.bad{border-inline-start-color:var(--danger)}
+.rv-q{font-weight:800;margin-bottom:6px}
+.rv-a{color:var(--muted);font-size:13.5px;line-height:1.8}
+
+/* ---------- 10) المجتمع ---------- */
+.community-grid{display:grid;gap:16px}
+@media(min-width:768px){.community-grid{grid-template-columns:repeat(3,1fr)}}
+.post-card{padding:20px;display:flex;flex-direction:column;gap:12px}
+.post-head{display:flex;gap:12px;align-items:center}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--grad-main);color:#fff;display:grid;place-items:center;font-weight:900;font-size:17px;flex-shrink:0}
+.post-meta{flex:1;min-width:0}
+.post-meta h4{font-size:14.5px;font-weight:800}
+.post-meta span{font-size:12px;color:var(--muted)}
+.post-tag{font-size:11px;padding:3px 10px;border-radius:99px;background:var(--mint-soft);color:var(--mint);border:1px solid var(--border);width:max-content}
+.post-text{font-size:14.5px}
+.post-foot{display:flex;gap:16px;margin-top:auto}
+.like-btn{display:flex;gap:7px;align-items:center;color:var(--muted);font-weight:800;font-size:13.5px;transition:.2s}
+.like-btn:hover{color:var(--mint)}
+.like-btn.liked{color:var(--gold)}
+.join-card{grid-column:1/-1;background:linear-gradient(135deg,rgba(15,81,50,.14),rgba(32,201,151,.08));border:1px solid var(--border-strong);border-radius:var(--radius);padding:26px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.join-card h3{font-size:19px;font-weight:900}
+.join-card p{color:var(--muted);font-size:14px;margin-top:4px}
+
+/* ---------- 11) الفوتر + توقيع المصمم ---------- */
+footer{border-top:1px solid var(--border);background:var(--bg-2);padding-top:50px;margin-top:20px}
+.footer-grid{display:grid;gap:30px;padding-bottom:36px}
+@media(min-width:768px){.footer-grid{grid-template-columns:1.4fr 1fr 1.2fr}}
+.footer-brand{display:flex;align-items:center;gap:10px}
+.footer-about p{color:var(--muted);font-size:14px;margin-top:12px;max-width:360px}
+.footer-social{display:flex;gap:10px;margin-top:16px}
+.footer-social a{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);display:grid;place-items:center;color:var(--muted);transition:.25s;font-size:15px}
+.footer-social a:hover{color:var(--mint);border-color:var(--mint);transform:translateY(-3px)}
+.footer-col h4{font-weight:900;margin-bottom:14px;font-size:16px}
+.footer-links{display:grid;gap:11px}
+.footer-links a{color:var(--muted);font-size:14px;display:flex;align-items:center;gap:9px;transition:.2s;font-weight:700}
+.footer-links a:hover{color:var(--mint)}
+.footer-links a i{width:20px;text-align:center}
+.credit-bar{border-top:1px solid var(--border);padding:26px 16px;display:flex;justify-content:center}
+.credit-card{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid rgba(255,193,7,.45);border-radius:20px;padding:16px 24px;box-shadow:0 0 34px rgba(255,193,7,.09);flex-wrap:wrap;justify-content:center;text-align:center}
+.credit-badge{width:52px;height:52px;border-radius:16px;background:var(--grad-gold);color:#3D2C00;display:grid;place-items:center;font-size:22px;flex-shrink:0}
+.credit-info h4{font-size:12.5px;color:var(--muted);font-weight:700}
+.credit-name{font-size:20px;font-weight:900;color:var(--gold);display:block;line-height:1.4}
+.credit-links{display:flex;gap:10px;margin-top:7px;flex-wrap:wrap;justify-content:center}
+.credit-links a{font-size:12.5px;font-weight:800;padding:7px 13px;border-radius:10px;border:1px solid var(--border);display:inline-flex;gap:7px;align-items:center;transition:.2s}
+.credit-links a:hover{border-color:var(--mint);color:var(--mint)}
+.copyright{text-align:center;color:var(--muted);font-size:13px;padding:18px 14px 24px;border-top:1px solid var(--border)}
+.copyright b{color:var(--gold)}
+
+/* ---------- 12) المساعد الذكي العائم ---------- */
+.chat-fab{position:fixed;bottom:24px;inset-inline-end:22px;z-index:950;width:60px;height:60px;border-radius:50%;background:var(--grad-main);color:#fff;font-size:24px;display:grid;place-items:center;box-shadow:0 10px 30px rgba(32,201,151,.4);transition:.3s}
+.chat-fab:hover{transform:scale(1.08)}
+.chat-fab .ping{position:absolute;top:2px;inset-inline-end:2px;width:13px;height:13px;border-radius:50%;background:var(--gold);border:2px solid var(--bg);animation:pulse 2s infinite}
+.chat-panel{position:fixed;bottom:96px;inset-inline-end:16px;width:min(380px,calc(100vw - 32px));height:min(560px,72vh);background:var(--card);border:1px solid var(--border-strong);border-radius:22px;box-shadow:0 24px 70px rgba(0,0,0,.5);z-index:960;display:none;flex-direction:column;overflow:hidden;animation:fadeUp .3s}
+.chat-panel.open{display:flex}
+.chat-head{display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--grad-main);color:#fff}
+.bot-av{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:17px;flex-shrink:0}
+.chat-head h4{font-size:15px;font-weight:900;line-height:1.3}
+.chat-head .status{font-size:11px;opacity:.9;display:flex;gap:6px;align-items:center;font-weight:700}
+.status .dot{width:7px;height:7px;background:#7CFFCB;border-radius:50%;animation:pulse 1.6s infinite}
+.chat-head .hd-btn{margin-inline-start:auto;color:#fff;font-size:15px;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+.chat-head .hd-btn:hover{background:rgba(255,255,255,.16)}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:84%;padding:11px 14px;border-radius:16px;font-size:14px;line-height:1.7;animation:fadeUp .25s;white-space:pre-line}
+.msg.bot{background:var(--card-2);border:1px solid var(--border);border-start-start-radius:5px;align-self:flex-start}
+.msg.user{background:var(--grad-main);color:#fff;align-self:flex-end;border-start-end-radius:5px}
+.msg.typing{display:flex;gap:5px;align-items:center;padding:14px}
+.typing span{width:7px;height:7px;background:var(--muted);border-radius:50%;animation:blink 1s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
+.chat-sugg{display:flex;gap:8px;padding:0 16px 10px;overflow-x:auto}
+.sugg{font-size:12px;padding:7px 13px;border-radius:99px;border:1px solid var(--border-strong);color:var(--mint);white-space:nowrap;font-weight:800;background:var(--mint-soft)}
+.sugg:hover{background:var(--grad-main);color:#fff}
+.chat-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:var(--bg-2)}
+.chat-input input{flex:1;min-width:0;padding:12px 14px;border-radius:13px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:14px}
+.chat-input input:focus{outline:none;border-color:var(--mint)}
+.chat-input button{width:46px;height:46px;border-radius:13px;background:var(--grad-main);color:#fff;font-size:16px;display:grid;place-items:center;flex-shrink:0}
+.chat-input button:active{transform:scale(.94)}
+
+/* ---------- 13) شريط التنقل السفلي (موبايل) ---------- */
+.bnav{display:none}
+@media(max-width:899px){
+  body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+  .bnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;bottom:0;inset-inline:0;z-index:940;background:rgba(10,27,18,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--border);padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+  [data-theme="light"] .bnav{background:rgba(242,250,245,.92)}
+  .chat-fab{bottom:calc(86px + env(safe-area-inset-bottom));width:54px;height:54px;font-size:21px}
+  .chat-panel{bottom:calc(148px + env(safe-area-inset-bottom));height:min(560px,64vh)}
+}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border-radius:12px;font-size:10.5px;font-weight:800;color:var(--muted);transition:.2s;position:relative}
+.bnav-item i{font-size:18px}
+.bnav-item.active{color:var(--mint)}
+.bnav-item.active::before{content:'';position:absolute;top:-9px;width:20px;height:3px;border-radius:99px;background:var(--mint);box-shadow:0 0 8px var(--mint)}
+
+/* ---------- 14) SweetAlert ---------- */
+.swal2-popup{font-family:'Tajawal',sans-serif!important;border-radius:22px!important}
+[data-theme="dark"] .swal2-popup{background:var(--card)!important;color:var(--text)!important}
+[data-theme="dark"] .swal2-title{color:var(--text)!important}
+[data-theme="dark"] .swal2-html-container{color:var(--muted)!important}
+.swal2-toast{border:1px solid var(--border-strong)!important}
+
+/* ---------- 15) استجابة الشاشات ---------- */
+@media(max-width:991px){
+  .main-nav{display:none}
+  .header-actions{margin-inline-start:auto}
+  .designer-chip{display:none}
+}
+@media(min-width:992px){
+  .header-actions{margin-inline-start:12px}
+}
+@media(max-width:520px){
+  .hero-cta .btn{width:100%}
+  section{padding:52px 0}
+  .quiz-card{padding:20px}
+  .credit-card{padding:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= الهيدر ================= -->
+<header>
+  <div class="container header-inner">
+    <a class="brand" href="#home">
+      <span class="brand-logo"><i class="fa-solid fa-seedling"></i></span>
+      <span class="brand-text">
+        <strong>رفيق الزراعة</strong>
+        <small>AGRILEARN</small>
+      </span>
+    </a>
+    <nav class="main-nav">
+      <a href="#home">الرئيسية</a>
+      <a href="#courses">الكورسات</a>
+      <a href="#labs">المختبرات الذكية</a>
+      <a href="#quiz">ساحة التحدي</a>
+      <a href="#community">المجتمع</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" id="soundToggle" aria-label="تشغيل / كتم الصوت"><i class="fa-solid fa-volume-high"></i></button>
+      <button class="icon-btn" id="themeToggle" aria-label="تبديل الوضع الليلي والنهاري"><i class="fa-solid fa-moon"></i></button>
+      <a class="designer-chip" href="#footer" title="مصمم المنصة"><i class="fa-solid fa-wand-magic-sparkles"></i> Ziad Ashraf</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ================= الهيرو ================= -->
+  <section id="home" class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="blob blob-1" aria-hidden="true"></div>
+    <div class="blob blob-2" aria-hidden="true"></div>
+    <div class="container hero-inner">
+      <div class="hero-content">
+        <span class="hero-badge"><i class="fa-solid fa-leaf"></i> منصة التعليم الزراعي التفاعلية</span>
+        <h1 class="hero-title">تمكين أجيال <span class="grad-text">الزراعة الذكية</span> والبحث العلمي</h1>
+        <p class="hero-sub">رفيقك اليومي في الحقل والمعمل: أدوات ذكية لحساب السماد وتشخيص أمراض النبات، وتحديات علمية تختبر بها معلوماتك — كل ده من موبايلك.</p>
+        <div class="hero-cta">
+          <a href="#labs" class="btn btn-primary"><i class="fa-solid fa-flask-vial"></i> استكشف المختبرات</a>
+          <a href="#quiz" class="btn btn-outline"><i class="fa-solid fa-trophy"></i> جرّب ساحة التحدي</a>
+        </div>
+        <div class="designer-pill"><i class="fa-solid fa-wand-magic-sparkles"></i> من تصميم <b>&nbsp;Ziad Ashraf</b></div>
+      </div>
+
+      <div class="hero-visual reveal" aria-hidden="true">
+        <div class="float-chip fc-1"><i class="fa-solid fa-robot"></i> مساعد ذكي 24/7</div>
+        <div class="dash-card">
+          <div class="dash-head"><span class="live-dot"></span> مؤشرات المزرعة — مباشر</div>
+          <div class="dash-row"><i class="fa-solid fa-droplet"></i><div class="dr-info"><span>رطوبة التربة</span><b>68%</b></div><div class="dr-bar"><span style="width:68%"></span></div></div>
+          <div class="dash-row"><i class="fa-solid fa-flask"></i><div class="dr-info"><span>النيتروجين المتاح</span><b>جيد</b></div><div class="dr-bar"><span style="width:74%"></span></div></div>
+          <div class="dash-row" style="border-bottom:none"><i class="fa-solid fa-temperature-half"></i><div class="dr-info"><span>حرارة الجو</span><b>24°</b></div><div class="dr-bar"><span style="width:55%"></span></div></div>
+          <div class="dash-chart">
+            <span style="--h:42%"></span><span style="--h:65%"></span><span style="--h:38%"></span><span style="--h:80%"></span><span style="--h:55%"></span><span style="--h:92%"></span><span style="--h:60%"></span>
+          </div>
+        </div>
+        <div class="float-chip fc-2"><i class="fa-solid fa-bolt"></i> تشخيص فوري للأمراض</div>
+      </div>
+    </div>
+
+    <div class="container stats-grid reveal">
+      <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-user-graduate"></i></span><b class="stat-num" data-count="12480" data-suffix="+">0</b><span class="stat-label">طالب وزراعي</span></div>
+      <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-robot"></i></span><b class="stat-num" data-count="48200" data-suffix="+">0</b><span class="stat-label">استشارة ذكية</span></div>
+      <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-chart-line"></i></span><b class="stat-num" data-count="97" data-suffix="%">0</b><span class="stat-label">نسبة الرضا</span></div>
+      <div class="stat-card"><span class="stat-icon"><i class="fa-solid fa-flask"></i></span><b class="stat-num" data-count="3" data-suffix="">0</b><span class="stat-label">مختبرات تفاعلية</span></div>
+    </div>
+  </section>
+
+  <!-- شريط الإعلانات المتحرك -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="tickerTrack">
+      <span class="tick-item"><i class="fa-solid fa-bullhorn"></i> انضم لبرنامج رفيق الزراعة التعليمي المجاني</span>
+      <span class="tick-item"><i class="fa-solid fa-flask gold"></i> مختبرات جديدة: حاسبة السماد + دورة النيتروجين + تشخيص الأمراض</span>
+      <span class="tick-item"><i class="fa-solid fa-graduation-cap"></i> الكورسات العلمية قيد التجهيز — قريبًا جدًا</span>
+      <span class="tick-item"><i class="fa-solid fa-trophy gold"></i> تحدي الأسبوع: اختبر معلوماتك الزراعية في ساحة التحدي</span>
+      <span class="tick-item"><i class="fa-solid fa-robot"></i> المساعد الذكي «رفيق الزراعة» متاح على مدار الساعة</span>
+    </div>
+  </div>
+
+  <!-- ================= قسم الكورسات (قريبًا) ================= -->
+  <section id="courses">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+        <h2>المركز الأكاديمي — الكورسات</h2>
+        <p>مكتبة دروس علمية متخصصة في أقسام الزراعة المختلفة</p>
+      </div>
+
+      <!-- أقسام الكورسات القادمة -->
+      <div class="dept-chips reveal">
+        <span class="dept-chip"><i class="fa-solid fa-bacteria"></i> أحياء دقيقة التربة <span class="soon">قريبًا</span></span>
+        <span class="dept-chip"><i class="fa-solid fa-dna"></i> وراثة المحاصيل <span class="soon">قريبًا</span></span>
+        <span class="dept-chip"><i class="fa-solid fa-shield-virus"></i> أمراض النبات <span class="soon">قريبًا</span></span>
+        <span class="dept-chip"><i class="fa-solid fa-cow"></i> الإنتاج الحيواني <span class="soon">قريبًا</span></span>
+        <span class="dept-chip"><i class="fa-solid fa-tractor"></i> الهندسة الزراعية والري <span class="soon">قريبًا</span></span>
+      </div>
+
+      <!-- حالة فارغة أنيقة: لا تتوفر كورسات حاليًا -->
+      <div class="empty-state card reveal">
+        <div class="empty-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <h3>لا تتوفر كورسات حاليًا</h3>
+        <p>بنجهّز مكتبة كورسات علمية متخصصة في كل أقسام الزراعة — ستضاف قريبًا جدًا إن شاء الله 🌱</p>
+        <div class="empty-features">
+          <span class="chip"><i class="fa-solid fa-video"></i> فيديوهات شرح</span>
+          <span class="chip"><i class="fa-solid fa-file-lines"></i> بنك أسئلة</span>
+          <span class="chip"><i class="fa-solid fa-certificate"></i> شهادات إتمام</span>
+        </div>
+        <button class="btn btn-gold" id="notifyBtn"><i class="fa-solid fa-bell"></i> ابنني لما الكورسات تنزل</button>
+        <div class="empty-note">أو كلّم المصمم مباشرة على واتساب وتابع جديد المنصة — <a href="https://wa.me/201099713432" target="_blank" rel="noopener">Ziad Ashraf</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= المختبرات الذكية ================= -->
+  <section id="labs">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-icon"><i class="fa-solid fa-flask-vial"></i></span>
+        <h2>المختبرات الذكية</h2>
+        <p>أدوات علمية تفاعلية شغّالة من موبايلك — بدون أي تسجيل</p>
+      </div>
+
+      <div class="lab-tabs no-scrollbar reveal" role="tablist">
+        <button class="lab-tab active" data-panel="panel-npk"><i class="fa-solid fa-flask"></i> حاسبة السماد N-P-K</button>
+        <button class="lab-tab" data-panel="panel-cycle"><i class="fa-solid fa-circle-nodes"></i> دورة النيتروجين</button>
+        <button class="lab-tab" data-panel="panel-scan"><i class="fa-solid fa-microscope"></i> تشخيص أمراض النبات</button>
+      </div>
+
+      <!-- 1) حاسبة السماد -->
+      <div class="lab-panel active" id="panel-npk" role="tabpanel">
+        <div class="panel-card card reveal">
+          <h3 class="panel-title"><i class="fa-solid fa-flask"></i> حاسبة السماد الذكية N-P-K</h3>
+          <p class="panel-desc">حدّد المحصول والمساحة وحالة تربتك — والحاسبة تقولك محتاج كام كيلو سماد بالظبط.</p>
+          <div class="form-grid cols-2">
+            <div class="field">
+              <label>المحصول</label>
+              <select id="npkCrop" class="select">
+                <option value="wheat">قمح</option>
+                <option value="corn">ذرة صفراء</option>
+                <option value="tomato">طماطم</option>
+                <option value="potato">بطاطس</option>
+                <option value="datepalm">نخيل</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>خصوبة التربة</label>
+              <select id="npkSoil" class="select">
+                <option value="low">ضعيفة</option>
+                <option value="mid" selected>متوسطة</option>
+                <option value="high">جيدة</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>مساحة الأرض <span class="val" id="npkAreaVal">1 فدان</span></label>
+              <input type="range" id="npkArea" min="0.25" max="10" step="0.25" value="1">
+            </div>
+            <div class="field">
+              <label>نيتروجين مُضاف بالفعل <span class="val" id="npkNVal">0 كجم</span></label>
+              <input type="range" id="npkN" min="0" max="100" step="5" value="0">
+            </div>
+            <div class="field">
+              <label>فوسفور مُضاف بالفعل <span class="val" id="npkPVal">0 كجم</span></label>
+              <input type="range" id="npkP" min="0" max="80" step="5" value="0">
+            </div>
+            <div class="field">
+              <label>بوتاسيوم مُضاف بالفعل <span class="val" id="npkKVal">0 كجم</span></label>
+              <input type="range" id="npkK" min="0" max="100" step="5" value="0">
+            </div>
+          </div>
+
+          <div class="npk-results">
+            <div class="result-card">
+              <div class="r-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+              <h5>يوريا 46%</h5>
+              <div class="r-val"><span id="outUrea">0</span> <small>كجم</small></div>
+            </div>
+            <div class="result-card">
+              <div class="r-icon"><i class="fa-solid fa-vial"></i></div>
+              <h5>تربل سوبر فوسفات 46%</h5>
+              <div class="r-val"><span id="outTsp">0</span> <small>كجم</small></div>
+            </div>
+            <div class="result-card">
+              <div class="r-icon"><i class="fa-solid fa-cubes"></i></div>
+              <h5>سلفات بوتاسيوم 50%</h5>
+              <div class="r-val"><span id="outSop">0</span> <small>كجم</small></div>
+            </div>
+          </div>
+          <div class="npk-need" id="npkNeed"></div>
+          <div class="npk-note"><i class="fa-solid fa-lightbulb"></i><span id="npkNote">قسّم كمية اليوريا على 2–3 دفعات (قبل الزراعة + التوريق)، والفوسفور والبوتاسيوم دفعة أساسية عند تحضير الأرض.</span></div>
+        </div>
+      </div>
+
+      <!-- 2) دورة النيتروجين -->
+      <div class="lab-panel" id="panel-cycle" role="tabpanel">
+        <div class="panel-card card reveal">
+          <h3 class="panel-title"><i class="fa-solid fa-circle-nodes"></i> دورة النيتروجين التفاعلية</h3>
+          <p class="panel-desc">دوس على أي مرحلة في الدورة وشوف بالظبط إيه اللي بيحصل تحت الأرض.</p>
+          <div class="cycle-wrap">
+            <div class="cycle-diagram">
+              <div class="cycle-ring"></div>
+              <div class="cycle-center">دورة<br>النيتروجين</div>
+              <button class="cyc-node" data-stage="fix"><i class="fa-solid fa-bacteria"></i><span>التثبيت</span></button>
+              <button class="cyc-node" data-stage="nitr"><i class="fa-solid fa-vials"></i><span>النترية</span></button>
+              <button class="cyc-node" data-stage="uptake"><i class="fa-solid fa-seedling"></i><span>الامتصاص</span></button>
+              <button class="cyc-node" data-stage="return"><i class="fa-solid fa-recycle"></i><span>الإرجاع</span></button>
+            </div>
+            <div class="cyc-info" id="cycInfo"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3) تشخيص أمراض النبات -->
+      <div class="lab-panel" id="panel-scan" role="tabpanel">
+        <div class="panel-card card reveal">
+          <h3 class="panel-title"><i class="fa-solid fa-microscope"></i> تشخيص أمراض النبات</h3>
+          <p class="panel-desc">ارفع صورة ورقة أو نبات مصاب والنظام يحللها ويسلّمك تقرير بأسباب المشكلة وطريقة العلاج.</p>
+          <div class="dropzone" id="dropzone">
+            <div class="dz-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <div class="dz-title">اسحب الصورة هنا أو دوس للاختيار</div>
+            <div class="dz-hint">JPG أو PNG — يفضّل صورة واضحة وقريبة من الورقة المصابة</div>
+            <input type="file" id="leafInput" accept="image/*" hidden>
+          </div>
+          <div class="preview-wrap" id="previewWrap">
+            <img id="previewImg" class="preview-img" alt="صورة النبات المرفوعة">
+            <div class="scan-progress"><div class="scan-fill" id="scanFill"></div></div>
+            <div class="scan-status" id="scanStatus"></div>
+            <button class="btn btn-primary btn-block" id="analyzeBtn" style="margin-top:14px"><i class="fa-solid fa-wand-magic-sparkles"></i> ابدأ التحليل الذكي</button>
+            <button class="btn btn-outline btn-block" id="resetScanBtn" style="margin-top:10px"><i class="fa-solid fa-rotate-right"></i> صورة أخرى</button>
+          </div>
+          <div class="diag-result" id="diagResult"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= ساحة التحدي ================= -->
+  <section id="quiz">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-icon"><i class="fa-solid fa-trophy"></i></span>
+        <h2>ساحة التحدي</h2>
+        <p>اختبر معلوماتك الزراعية — مؤقّت، أصوات، ونقاط. مستعد؟</p>
+      </div>
+
+      <div class="quiz-shell reveal">
+        <!-- شاشة البداية -->
+        <div class="quiz-card card" id="quizStart">
+          <div style="text-align:center">
+            <div class="quiz-hero-ic">🏆</div>
+            <h3>جاهز للتحدي؟</h3>
+            <p class="panel-desc" style="margin:8px auto 0;max-width:440px">أسئلة عشوائية من تخصصات الزراعة • 20 ثانية لكل سؤال • كل إجابة صحيحة = 10 نقاط + بونص سرعة</p>
+          </div>
+          <div class="quiz-cats" id="quizCats">
+            <button class="chip active" data-cat="all">🎲 شامل</button>
+            <button class="chip" data-cat="soil">🪨 التربة والأسمدة</button>
+            <button class="chip" data-cat="crop">🌾 المحاصيل</button>
+            <button class="chip" data-cat="irrig">💧 الري</button>
+            <button class="chip" data-cat="pest">🛡️ وقاية النبات</button>
+          </div>
+          <button class="btn btn-primary btn-block" id="startQuizBtn"><i class="fa-solid fa-play"></i> ابدأ الاختبار</button>
+          <div style="text-align:center"><span class="best-banner" id="bestBanner"><i class="fa-solid fa-crown"></i> أول مرة تلعب؟ خلّي أفضل نتيجة ليك!</span></div>
+        </div>
+
+        <!-- شاشة الأسئلة -->
+        <div class="quiz-card card" id="quizPlay" hidden>
+          <div class="q-progress">
+            <span class="q-count" id="qCount">1/8</span>
+            <div class="q-dots" id="qDots"></div>
+            <div class="q-timer" id="qTimer"><i class="fa-solid fa-stopwatch"></i> <span id="qTimeLeft">20</span>ث</div>
+          </div>
+          <div class="q-timer-bar"><div class="q-timer-fill" id="qTimerFill"></div></div>
+          <span class="q-cat-badge" id="qCat"></span>
+          <h3 class="q-text" id="qText"></h3>
+          <div class="q-opts" id="qOpts"></div>
+          <div class="q-explain" id="qExplain"><i class="fa-solid fa-lightbulb"></i><span></span></div>
+          <div class="q-next-wrap"><button class="btn btn-primary" id="nextBtn" hidden>التالي <i class="fa-solid fa-arrow-left"></i></button></div>
+        </div>
+
+        <!-- شاشة النتيجة -->
+        <div class="quiz-card card" id="quizResult" hidden>
+          <div class="ring-wrap"><div class="score-ring" id="scoreRing"><div class="sr-in"><b id="srPct">0%</b><small>نسبة النجاح</small></div></div></div>
+          <h3 style="text-align:center" id="srTitle">أحسنت!</h3>
+          <div class="result-chips">
+            <div class="rc"><b id="rcScore">0</b><span>النقاط</span></div>
+            <div class="rc"><b id="rcCorrect">0</b><span>صحيحة</span></div>
+            <div class="rc"><b id="rcWrong">0</b><span>خاطئة</span></div>
+            <div class="rc"><b id="rcTime">0</b><span>ثانية</span></div>
+          </div>
+          <h4 class="review-title">مراجعة الإجابات:</h4>
+          <div class="review-list" id="reviewList"></div>
+          <button class="btn btn-primary btn-block" id="againBtn" style="margin-top:18px"><i class="fa-solid fa-rotate-right"></i> العب تاني</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= المجتمع ================= -->
+  <section id="community">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-icon"><i class="fa-solid fa-users"></i></span>
+        <h2>مجتمع رفيق الزراعة</h2>
+        <p>خبرات حقيقية من طلاب ومزارعين — شارك وتعلم</p>
+      </div>
+      <div class="community-grid reveal">
+        <div class="post-card card">
+          <div class="post-head">
+            <span class="avatar">أ</span>
+            <div class="post-meta"><h4>أحمد — البحيرة</h4><span>منذ ساعتين</span></div>
+            <span class="post-tag">💧 ري</span>
+          </div>
+          <p class="post-text">تجربتي مع الري بالتنقيط في البيوت المحمية وفّرت لي حوالي 40% من المياه وزوّدت إنتاجية الطماطم. اسألوا أي سؤال 👌</p>
+          <div class="post-foot">
+            <button class="like-btn" data-id="p1" data-base="24"><i class="fa-regular fa-heart"></i><span>24</span></button>
+          </div>
+        </div>
+        <div class="post-card card">
+          <div class="post-head">
+            <span class="avatar">س</span>
+            <div class="post-meta"><h4>سارة — المنصورة</h4><span>منذ 5 ساعات</span></div>
+            <span class="post-tag">🌾 محاصيل</span>
+          </div>
+          <p class="post-text">سؤال للخبراء: أفضل موعد لزراعة الطماطم الشتوية في الدلتا؟ وهل أنصح بشتلة معتمدة ولا بذرة؟</p>
+          <div class="post-foot">
+            <button class="like-btn" data-id="p2" data-base="12"><i class="fa-regular fa-heart"></i><span>12</span></button>
+          </div>
+        </div>
+        <div class="post-card card">
+          <div class="post-head">
+            <span class="avatar">م</span>
+            <div class="post-meta"><h4>محمد — المنيا</h4><span>أمس</span></div>
+            <span class="post-tag">🪨 تربة</span>
+          </div>
+          <p class="post-text">عملت تحليل تربة قبل موسم القمح وطلع النيتروجين ضعيف — استخدمت حاسبة السماد هنا وحددت لي الكميات بالظبط. تجربة ناجحة 🔥</p>
+          <div class="post-foot">
+            <button class="like-btn" data-id="p3" data-base="31"><i class="fa-regular fa-heart"></i><span>31</span></button>
+          </div>
+        </div>
+        <div class="join-card">
+          <div>
+            <h3>انضم لمجتمعنا على واتساب 🌿</h3>
+            <p>خبرات يومية من مزارعين وطلاب زراعة من كل المحافظات — مجاني 100%</p>
+          </div>
+          <a class="btn btn-gold" href="https://wa.me/201099713432?text=%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D9%86%D8%B6%D9%85%D8%A7%D9%85%20%D9%84%D9%85%D8%AC%D8%AA%D9%85%D8%B9%20%D8%B1%D9%81%D9%8A%D9%82%20%D8%A7%D9%84%D8%B2%D8%B1%D8%A7%D8%B9%D8%A9" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> انضم الآن</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= الفوتر + توقيع المصمم ================= -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <div class="footer-brand">
+          <span class="brand-logo"><i class="fa-solid fa-seedling"></i></span>
+          <span class="brand-text"><strong>رفيق الزراعة</strong><small>AGRILEARN</small></span>
+        </div>
+        <p>منصة تعليمية تفاعلية هدفها تمكين طلاب كليات الزراعة والمزارعين بالعلم التطبيقي والتقنيات الذكية — من التربة للمحصول.</p>
+        <div class="footer-social">
+          <a href="https://wa.me/201099713432" target="_blank" rel="noopener" aria-label="واتساب"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="tel:+201099713432" aria-label="اتصال"><i class="fa-solid fa-phone"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>روابط سريعة</h4>
+        <div class="footer-links">
+          <a href="#home"><i class="fa-solid fa-house"></i> الرئيسية</a>
+          <a href="#courses"><i class="fa-solid fa-graduation-cap"></i> الكورسات</a>
+          <a href="#labs"><i class="fa-solid fa-flask-vial"></i> المختبرات الذكية</a>
+          <a href="#quiz"><i class="fa-solid fa-trophy"></i> ساحة التحدي</a>
+          <a href="#community"><i class="fa-solid fa-users"></i> المجتمع</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>تواصل مع المصمم</h4>
+        <div class="footer-links">
+          <a href="https://wa.me/201099713432" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> واتساب: <bdi dir="ltr">+20 109 971 3432</bdi></a>
+          <a href="tel:+201099713432"><i class="fa-solid fa-phone"></i> اتصال مباشر</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- بطاقة توقيع المصمم -->
+  <div class="credit-bar">
+    <div class="credit-card">
+      <div class="credit-badge"><i class="fa-solid fa-palette"></i></div>
+      <div class="credit-info">
+        <h4>التصميم والتطوير بواسطة</h4>
+        <span class="credit-name">Ziad Ashraf</span>
+        <div class="credit-links">
+          <a href="tel:+201099713432"><i class="fa-solid fa-phone"></i> <bdi dir="ltr">+20 109 971 3432</bdi></a>
+          <a href="https://wa.me/201099713432" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> راسلني واتساب</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="copyright">© <span id="year">2026</span> رفيق الزراعة AgriLearn — صُنع بكل 💚 بواسطة <b>Ziad Ashraf</b></div>
+</footer>
+
+<!-- ================= المساعد الذكي العائم ================= -->
+<button class="chat-fab" id="chatFab" aria-label="افتح المساعد الذكي"><i class="fa-solid fa-robot"></i><span class="ping"></span></button>
+<aside class="chat-panel" id="chatPanel" role="dialog" aria-label="المساعد الذكي رفيق الزراعة">
+  <div class="chat-head">
+    <span class="bot-av"><i class="fa-solid fa-robot"></i></span>
+    <div>
+      <h4>رفيق الزراعة</h4>
+      <span class="status"><span class="dot"></span> متصل الآن — يجيب فورًا</span>
+    </div>
+    <button class="hd-btn" id="chatClear" aria-label="مسح المحادثة"><i class="fa-solid fa-trash-can"></i></button>
+    <button class="hd-btn" id="chatClose" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="chat-msgs" id="chatMsgs"></div>
+  <div class="chat-sugg no-scrollbar" id="chatSugg"></div>
+  <form class="chat-input" id="chatForm">
+    <input type="text" id="chatText" placeholder="اكتب سؤالك الزراعي…" autocomplete="off">
+    <button type="submit" aria-label="إرسال"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</aside>
+
+<!-- ================= شريط التنقل السفلي (موبايل) ================= -->
+<nav class="bnav" aria-label="التنقل الرئيسي">
+  <a class="bnav-item active" href="#home" data-target="home"><i class="fa-solid fa-house"></i><span>الرئيسية</span></a>
+  <a class="bnav-item" href="#courses" data-target="courses"><i class="fa-solid fa-graduation-cap"></i><span>كورسات</span></a>
+  <a class="bnav-item" href="#labs" data-target="labs"><i class="fa-solid fa-flask-vial"></i><span>مختبرات</span></a>
+  <a class="bnav-item" href="#quiz" data-target="quiz"><i class="fa-solid fa-trophy"></i><span>تحدي</span></a>
+  <a class="bnav-item" href="#community" data-target="community"><i class="fa-solid fa-users"></i><span>مجتمع</span></a>
+</nav>
+
+<script>
+/* =====================================================================
+   رفيق الزراعة | AgriLearn — منطق التطبيق كامل
+   التصميم والتطوير: Ziad Ashraf — واتساب: +20 109 971 3432
+   ===================================================================== */
+
+/* ---------- 1) الإعدادات ونقاط الربط الخارجية ---------- */
+const AI_CONFIG = {
+  // لربط المساعد بـ n8n أو أي باك-إند: ضع الرابط هنا،
+  // سيُرسل الطلب بصيغة { message: "..." } ويُتوقع رد JSON فيه { reply: "..." }
+  chatWebhook: null,   // مثال: 'https://your-n8n.app/webhook/agri-chat'
+  // نقطة ربط نموذج تشخيص الأمراض الحقيقي (اختياري):
+  // يُرسل { image: dataURL } ويُتوقع رد { name, confidence, severity, sevPct, tips[] }
+  scanWebhook: null,
+};
+
+/* ---------- 2) أدوات مساعدة + التخزين المحلي ---------- */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const store = {
+  get(key, fallback) {
+    try { const v = localStorage.getItem('agri_' + key); return v === null ? fallback : JSON.parse(v); }
+    catch (e) { return fallback; }
+  },
+  set(key, val) { try { localStorage.setItem('agri_' + key, JSON.stringify(val)); } catch (e) {} }
+};
+function toast(icon, title) {
+  if (window.Swal) Swal.fire({ toast: true, position: 'top', icon, title, showConfirmButton: false, timer: 2200, timerProgressBar: true });
+}
+const shuffle = arr => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+};
+
+/* ---------- 3) محرك الصوت (Web Audio API — بدون ملفات) ---------- */
+const Sound = {
+  ctx: null,
+  on: store.get('sound', true),
+  init() { if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } },
+  tone(freq, dur = 0.12, type = 'sine', vol = 0.15, delay = 0) {
+    if (!this.on) return;
+    this.init(); if (!this.ctx) return;
+    const t = this.ctx.currentTime + delay;
+    const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(this.ctx.destination);
+    o.start(t); o.stop(t + dur + 0.05);
+  },
+  click()   { this.tone(660, 0.06, 'triangle', 0.08); },
+  correct() { [523, 659, 784].forEach((f, i) => this.tone(f, 0.14, 'sine', 0.16, i * 0.09)); },
+  wrong()   { this.tone(180, 0.25, 'sawtooth', 0.12); this.tone(140, 0.3, 'sawtooth', 0.1, 0.12); },
+  notify()  { this.tone(880, 0.1, 'sine', 0.12); this.tone(1174, 0.14, 'sine', 0.12, 0.1); }
+};
+document.addEventListener('pointerdown', () => Sound.init(), { once: true });
+
+/* ---------- 4) الوضع الليلي / النهاري + الصوت ---------- */
+const themeBtn = $('#themeToggle'), soundBtn = $('#soundToggle');
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  store.set('theme', t);
+  themeBtn.innerHTML = t === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', t === 'dark' ? '#07130D' : '#F2FAF5');
+}
+function syncSoundBtn() {
+  soundBtn.innerHTML = Sound.on ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
+}
+applyTheme(store.get('theme', 'dark'));
+syncSoundBtn();
+themeBtn.addEventListener('click', () => {
+  Sound.click();
+  applyTheme(store.get('theme', 'dark') === 'dark' ? 'light' : 'dark');
+});
+soundBtn.addEventListener('click', () => {
+  Sound.on = !Sound.on; store.set('sound', Sound.on); syncSoundBtn();
+  if (Sound.on) Sound.notify();
+});
+
+/* ---------- 5) شريط الإعلانات (تكرار المحتوى للحلقة السلسة) ---------- */
+(function () { const t = $('#tickerTrack'); if (t) t.innerHTML += t.innerHTML; })();
+
+/* ---------- 6) عدّادات الأرقام المتحركة ---------- */
+function animateCount(el) {
+  const target = parseFloat(el.dataset.count), suffix = el.dataset.suffix || '';
+  const dur = 1600, t0 = performance.now();
+  const step = now => {
+    const p = Math.min(1, (now - t0) / dur), eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(target * eased).toLocaleString('en-US') + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+(function initCounters() {
+  const obs = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) { animateCount(e.target); obs.unobserve(e.target); }
+  }), { threshold: 0.4 });
+  $$('.stat-num').forEach(el => obs.observe(el));
+})();
+
+/* ---------- 7) ظهور العناصر عند التمرير ---------- */
+(function initReveal() {
+  const obs = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+  }), { threshold: 0.12 });
+  $$('.reveal').forEach(el => obs.observe(el));
+})();
+
+/* ---------- 8) تمييز القسم النشط في شريط التنقل السفلي ---------- */
+(function initBnav() {
+  const obs = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) {
+      $$('.bnav-item').forEach(b => b.classList.toggle('active', b.dataset.target === e.target.id));
+    }
+  }), { rootMargin: '-40% 0px -55% 0px' });
+  ['home', 'courses', 'labs', 'quiz', 'community'].forEach(id => {
+    const el = document.getElementById(id); if (el) obs.observe(el);
+  });
+})();
+
+/* ---------- 9) تبويبات المختبرات ---------- */
+$$('.lab-tab').forEach(tab => tab.addEventListener('click', () => {
+  $$('.lab-tab').forEach(x => x.classList.toggle('active', x === tab));
+  $$('.lab-panel').forEach(p => p.classList.toggle('active', p.id === tab.dataset.panel));
+  Sound.click();
+}));
+
+/* ---------- 10) حاسبة السماد الذكية N-P-K ---------- */
+const CROPS = {
+  wheat:    { name: 'قمح',        n: 75,  p: 30, k: 15 },
+  corn:     { name: 'ذرة صفراء',  n: 90,  p: 30, k: 25 },
+  tomato:   { name: 'طماطم',      n: 60,  p: 45, k: 60 },
+  potato:   { name: 'بطاطس',      n: 70,  p: 60, k: 80 },
+  datepalm: { name: 'نخيل',       n: 100, p: 50, k: 100 }
+};
+function paintRange(el) {
+  const min = +el.min, max = +el.max, val = +el.value;
+  el.style.setProperty('--fill', ((val - min) / (max - min) * 100) + '%');
+}
+function calcNPK() {
+  const crop = CROPS[$('#npkCrop').value];
+  const area = +$('#npkArea').value;
+  const fertility = { low: 1.2, mid: 1.0, high: 0.85 }[$('#npkSoil').value];
+  const applied = { n: +$('#npkN').value, p: +$('#npkP').value, k: +$('#npkK').value };
+  const need = key => Math.max(0, (crop[key] * fertility - applied[key])) * area;
+  const n = need('n'), p = need('p'), k = need('k');
+  const urea = n / 0.465, tsp = p / 0.46, sop = k / 0.5;
+
+  $('#npkAreaVal').textContent = area + ' فدان';
+  $('#npkNVal').textContent = applied.n + ' كجم';
+  $('#npkPVal').textContent = applied.p + ' كجم';
+  $('#npkKVal').textContent = applied.k + ' كجم';
+  $('#outUrea').textContent = Math.ceil(urea).toLocaleString('en-US');
+  $('#outTsp').textContent  = Math.ceil(tsp).toLocaleString('en-US');
+  $('#outSop').textContent  = Math.ceil(sop).toLocaleString('en-US');
+  $('#npkNeed').innerHTML = `احتياج <b>${crop.name}</b> التقريبي: نيتروجين <b>${crop.n}</b> • فوسفور <b>${crop.p}</b> • بوتاسيوم <b>${crop.k}</b> كجم/فدان (يتغير حسب خصوبة تربتك)`;
+
+  const parts = [];
+  if (n > 0)  parts.push(`نيتروجين ${Math.ceil(n)} كجم`);
+  if (p > 0)  parts.push(`فوسفور ${Math.ceil(p)} كجم`);
+  if (k > 0)  parts.push(`بوتاسيوم ${Math.ceil(k)} كجم`);
+  $('#npkNote').textContent = parts.length
+    ? `مطلوب إضافة: ${parts.join(' + ')}. قسّم اليوريا على 2–3 دفعات (قبل الزراعة + التوريق)، والفوسفور والبوتاسيوم دفعة أساسية عند تحضير الأرض.`
+    : '✅ الإضافات الحالية تكفي حسب بياناتك — لا حاجة لسماد إضافي في هذه الدورة.';
+}
+['npkCrop', 'npkSoil', 'npkArea', 'npkN', 'npkP', 'npkK'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', calcNPK);
+  el.addEventListener('change', calcNPK);
+});
+$$('input[type=range]').forEach(paintRange);
+calcNPK();
+
+/* ---------- 11) دورة النيتروجين التفاعلية ---------- */
+const N_STAGES = {
+  fix: {
+    t: 'التثبيت الحيوي', i: 'fa-bacteria', tag: 'بكتيريا Rhizobium',
+    d: 'بكتيريا الرايزوبيوم تعيش في عقد جذور البقوليات (البرسيم والفول واللوبيا) وتحوّل النيتروجين الجوي N₂ — غير الصالح للامتصاص — إلى أمونيا NH₃ يستطيع النبات الاستفادة منها. لهذا نُدخل البقوليات في دورة المحاصيل.'
+  },
+  nitr: {
+    t: 'عملية النترية', i: 'fa-vials', tag: 'Nitrosomonas + Nitrobacter',
+    d: 'بكتيريا Nitrosomonas تحوّل الأمونيا إلى نتريت NO₂⁻، ثم تحوّلها Nitrobacter إلى نترات NO₃⁻ وهي الصورة التي يمتصها النبات بسهولة. عملية هوائية تمامًا — تتأثر بالتهوية والحرارة ورطوبة التربة.'
+  },
+  uptake: {
+    t: 'امتصاص النبات', i: 'fa-seedling', tag: 'جذور النبات',
+    d: 'تمتص الجذور النترات والأمونيا من محلول التربة وتبني منها الأحماض الأمينية والبروتينات والكلوروفيل — لهذا نقص النيتروجين يظهر أولًا كاصفرار في الأوراق القديمة.'
+  },
+  return: {
+    t: 'التحلل والإرجاع', i: 'fa-recycle', tag: 'بكتيريا التحلل والإرجاع',
+    d: 'بقايا النباتات والكائنات تتحلل وتعيد النيتروجين العضوي إلى التربة، وبكتيريا الإرجاع (في ظروف لا هوائية) تحوّل النترات إلى غاز N₂ يعود للغلاف الجوي — وهكذا تكتمل الدورة من جديد.'
+  }
+};
+function setStage(key) {
+  $$('.cyc-node').forEach(n => n.classList.toggle('active', n.dataset.stage === key));
+  const s = N_STAGES[key];
+  $('#cycInfo').innerHTML = `
+    <div class="cyc-info-head">
+      <i class="fa-solid ${s.i}"></i>
+      <div><h4>${s.t}</h4><span class="cyc-tag">${s.tag}</span></div>
+    </div>
+    <p>${s.d}</p>`;
+}
+$$('.cyc-node').forEach(n => n.addEventListener('click', () => { Sound.click(); setStage(n.dataset.stage); }));
+setStage('fix');
+
+/* ---------- 12) تشخيص أمراض النبات ---------- */
+const DISEASES = [
+  { name: 'اللفحة المبكرة (Early Blight)', conf: 76, sev: 'عالية', sevPct: 80, healthy: false,
+    tips: ['أزل الأوراق المصابة وتخلّص منها بعيدًا عن الحقل', 'استخدم مبيد فطري مناسب مع الالتزام بفترة الأمان قبل الحصاد', 'حسّن التهوية وتجنّب الرش فوق الوريقات مساءً', 'أدر دورة محاصيل ولا تعيد الطماطم في نفس الأرض مباشرة'] },
+  { name: 'البياض الدقيقي (Powdery Mildew)', conf: 83, sev: 'متوسطة', sevPct: 55, healthy: false,
+    tips: ['رش كبريت مبلل أو بيكربونات الصوديوم وفق الإرشادات', 'حسّن التهوية وقلّل كثافة النباتات', 'قلّل التسميد النيتروجيني الزائد الذي يزيد حساسية الأوراق', 'رش الصباح الباكر ليتمدد المادة جيدًا'] },
+  { name: 'نقص عناصر غذائية (نيتروجين / مغنيسيوم)', conf: 68, sev: 'منخفضة', sevPct: 30, healthy: false,
+    tips: ['رش ورقي بيوريا 2% أو سلفات مغنيسيوم 1.5%', 'افحص pH التربة — الامتصاص يتعطل خارج مدى 6–7', 'أضف كمبوست أو سماد عضوي متحلل قبل الموسم القادم', 'جرّب حاسبة السماد في هذا المختبر لتحديد الكميات'] },
+  { name: 'اصفرار فيروسي (يُنصح بخبرة مختص)', conf: 61, sev: 'عالية', sevPct: 85, healthy: false,
+    tips: ['عالج الحشرات الناقلة (المن / الذبابة البيضاء) أولًا', 'أزل النباتات المصابة بشدة لمنع الانتشار', 'استخدم بذور وشتلات معتمدة خالية من الفيروس', 'اعزل مزرعتك عن مصادر العدوى القريبة'] },
+  { name: 'النبات سليم — لا توجد أعراض مرضية', conf: 92, sev: 'لا توجد', sevPct: 5, healthy: true,
+    tips: ['استمر في المتابعة الأسبوعية للأوراق الحديثة', 'حافظ على برنامج تسميد وري متوازن', 'سجّل حالة النبات في تقويم مزرعتك لمتابعة التطور'] }
+];
+let scanFile = null;
+const dz = $('#dropzone'), leafInput = $('#leafInput');
+dz.addEventListener('click', () => leafInput.click());
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+leafInput.addEventListener('change', () => { if (leafInput.files[0]) handleFile(leafInput.files[0]); });
+function handleFile(f) {
+  if (!f.type.startsWith('image/')) { toast('error', 'من فضلك ارفع صورة صحيحة (JPG / PNG)'); return; }
+  scanFile = f;
+  $('#previewImg').src = URL.createObjectURL(f);
+  $('#previewWrap').style.display = 'block';
+  $('#diagResult').style.display = 'none';
+  $('#scanFill').style.width = '0%';
+  $('#scanStatus').textContent = '';
+  $('#analyzeBtn').disabled = false;
+  Sound.click();
+}
+$('#resetScanBtn').addEventListener('click', () => {
+  scanFile = null; leafInput.value = '';
+  $('#previewWrap').style.display = 'none';
+  $('#diagResult').style.display = 'none';
+  Sound.click();
+});
+$('#analyzeBtn').addEventListener('click', runScan);
+function simulateDiagnosis() {
+  return { ...DISEASES[(scanFile.size + scanFile.name.length) % DISEASES.length] };
+}
+async function runScan() {
+  if (!scanFile) return;
+  const btn = $('#analyzeBtn');
+  btn.disabled = true;
+  const steps = [
+    ['قراءة الصورة…', 18],
+    ['فحص البقع والاصفرار…', 45],
+    ['مقارنة بـ 4,000 حالة مرضية…', 72],
+    ['إعداد التقرير النهائي…', 94],
+    ['اكتمل التحليل ✅', 100]
+  ];
+  for (const [txt, p] of steps) {
+    $('#scanStatus').textContent = txt;
+    $('#scanFill').style.width = p + '%';
+    await new Promise(r => setTimeout(r, 620));
+  }
+  let d;
+  if (AI_CONFIG.scanWebhook) {
+    // نقطة الربط بالنموذج الحقيقي (إن وُجدت)
+    try {
+      const res = await fetch(AI_CONFIG.scanWebhook, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: $('#previewImg').src })
+      });
+      const j = await res.json();
+      d = { name: j.name, conf: j.confidence || 70, sev: j.severity || 'متوسطة', sevPct: j.sevPct || 50, healthy: false, tips: j.tips || ['استشر أخصائي وقاية نبات'] };
+    } catch (e) { d = simulateDiagnosis(); }
+  } else {
+    d = simulateDiagnosis();
+  }
+  renderDiagnosis(d);
+  Sound.notify();
+  btn.disabled = false;
+}
+function renderDiagnosis(d) {
+  const color = d.healthy ? '#22C55E' : (d.sevPct >= 65 ? '#EF4444' : '#FFC107');
+  $('#diagResult').innerHTML = `
+    <div class="diag-head">
+      <div class="conf-ring" style="background:conic-gradient(${color} ${d.conf}%, rgba(128,128,128,.18) 0)"><span>${d.conf}%</span></div>
+      <div style="flex:1;min-width:180px">
+        <div class="diag-name">${d.healthy ? '✅ ' : '🦠 '}${d.name}</div>
+        <div class="diag-sev-label">شدّة الإصابة: <b>${d.sev}</b></div>
+        <div class="sev-bar"><div class="sev-fill" style="width:${d.sevPct}%;background:${color}"></div></div>
+      </div>
+    </div>
+    <ul class="tips">${d.tips.map(t => `<li><i class="fa-solid fa-circle-check"></i><span>${t}</span></li>`).join('')}</ul>
+    <div class="diag-note"><i class="fa-solid fa-circle-info"></i><span>نتيجة محاكاة توضيحية للواجهة — نقطة ربط نموذج التشخيص الحقيقي جاهزة في الكود (AI_CONFIG.scanWebhook).</span></div>`;
+  $('#diagResult').style.display = 'block';
+}
+
+/* ---------- 13) ساحة التحدي (Quiz) ---------- */
+const QUESTIONS = [
+  { cat: 'soil', q: 'البكتيريا التي تثبّت النيتروجين الجوي في العقد الجذرية للبقوليات اسمها؟',
+    opts: ['Nitrosomonas', 'Rhizobium', 'Nitrobacter', 'Azotobacter'], a: 1,
+    ex: 'بكتيريا الرايزوبيوم (Rhizobium) تعيش في تكافل مع البقوليات وتثبّت النيتروجين الجوي في العقد الجذرية.' },
+  { cat: 'soil', q: 'الأرقام الثلاثة المكتوبة على أكياس الأسمدة (مثل 20-20-20) تدل على؟',
+    opts: ['النيتروجين - الفوسفور - البوتاسيوم', 'الحديد - الزنك - المنجنيز', 'الكالسيوم - المغنيسيوم - الصوديوم', 'الرطوبة - الملوحة - الحموضة'], a: 0,
+    ex: 'الأرقام الثلاثة تمثل نسبة النيتروجين N والفوسفور P والبوتاسيوم K على الترتيب.' },
+  { cat: 'soil', type: 'tf', q: 'الرقم الهيدروجيني (pH) المناسب لمعظم المحاصيل يتراوح بين 6 و 7.',
+    opts: ['صح', 'خطأ'], a: 0,
+    ex: 'معظم المحاصيل تمتص العناصر الغذائية بكفاءة في مدى pH 6–7؛ الانحراف الشديد يعيق الامتصاص حتى لو كان السماد موجودًا.' },
+  { cat: 'soil', q: 'الدبال (Humus) هو:',
+    opts: ['المادة العضوية المتحللة تمامًا في التربة', 'الحصى الناعم', 'نوع من الأسمدة الكيماوية', 'طبقة المياه الجوفية'], a: 0,
+    ex: 'الدبال هو ناتج التحلل الكامل للمادة العضوية — يحسّن بنية التربة وقدرتها على الاحتفاظ بالماء والعناصر.' },
+  { cat: 'crop', q: 'أفضل موعد لزراعة القمح في مصر:',
+    opts: ['أوائل أغسطس', 'منتصف نوفمبر حتى أوائل ديسمبر', 'منتصف فبراير', 'أوائل مايو'], a: 1,
+    ex: 'الموعد الموصى به من منتصف نوفمبر لأوائل ديسمبر — لضمان الطرز والنضج في الأجواء الملائمة و حصاد مرتفع.' },
+  { cat: 'crop', q: 'نقص النيتروجين في النبات يظهر كـ:',
+    opts: ['اصفرار الأوراق القديمة (السفلية)', 'تعفن الثمار', 'تقزّم الجذور فقط', 'بقع بنية دائرية على الثمار'], a: 0,
+    ex: 'النيتروجين عنصر متحرك في النبات فينتقل من الأوراق القديمة إلى الحديثة، فتصفر الأوراق السفلية أولًا.' },
+  { cat: 'crop', type: 'tf', q: 'تعد دورة المحاصيل (Crop Rotation) من أهم ممارسات الإدارة المتكاملة للآفات.',
+    opts: ['صح', 'خطأ'], a: 0,
+    ex: 'تناوب المحاصيل يكسر دورة حياة الآفات والأمراض ويحسّن خصوبة التربة — خصوصًا مع إدخال البقوليات.' },
+  { cat: 'crop', q: 'المحصول الذي يُزرع لتحسين خصوبة التربة وليس للبيع يسمى:',
+    opts: ['سماد أخضر', 'محصول نقدي', 'محصول شتوي', 'زراعة مائية'], a: 0,
+    ex: 'الأسمدة الخضراء مثل البرسيم والترمس تُحرث في التربة وهي خضراء لرفع المادة العضوية والنيتروجين.' },
+  { cat: 'irrig', q: 'أكفأ طرق الري من حيث توفير المياه:',
+    opts: ['الري بالغمر', 'الري بالرش', 'الري بالتنقيط', 'الري بالمصاطب'], a: 2,
+    ex: 'الري بالتنقيط يوصل الماء لمنطقة الجذور مباشرة ويقلل الفاقد بالتبخر والتسرب — يوفر من 30 إلى 60%.' },
+  { cat: 'irrig', type: 'tf', q: 'رش المياه فوق أوراق النبات في منتصف النهار الحار يزيد التبخر وقد يحرق الأوراق.',
+    opts: ['صح', 'خطأ'], a: 0,
+    ex: 'قطرات الماء على الأوراق في ذروة الحرارة تعمل كعدسة تكبّر أشعة الشمس وتسبب حروقًا — الرش يكون صباحًا أو مساءً.' },
+  { cat: 'pest', q: 'المكافحة الحيوية تعتمد على:',
+    opts: ['استخدام الأعداء الطبيعية للآفات', 'زيادة جرعات المبيدات', 'الحرق المستمر للأراضي', 'الإفراط في التسميد'], a: 0,
+    ex: 'مثل استخدام حشرة التريكوجراما لمقاومة دودة ورق القطن — مكافحة آمنة وبدون بقايا مبيدات.' },
+  { cat: 'pest', q: 'أفضل طريقة للوقاية من الأمراض الفطرية داخل البيوت المحمية:',
+    opts: ['التهوية الجيدة وتقليل الرطوبة', 'زيادة الرش فوق الأوراق', 'إغلاق البيت تمامًا نهاريًا', 'زيادة الكثافة النباتية'], a: 0,
+    ex: 'معظم الفطريات تحب الجو الرطب الراكد — التهوية الجيدة وتقليل الرطوبة هي أول خط دفاع.' }
+];
+const CAT_NAMES = { all: 'شامل', soil: 'التربة والأسمدة', crop: 'المحاصيل', irrig: 'الري', pest: 'وقاية النبات' };
+const Q_TIME = 20;
+const OPT_LETTERS = ['أ', 'ب', 'ج', 'د'];
+let quiz = null, quizCat = 'all';
+
+$('#quizCats').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  $$('#quizCats .chip').forEach(c => c.classList.toggle('active', c === b));
+  quizCat = b.dataset.cat; Sound.click();
+});
+function showCard(which) {
+  $('#quizStart').hidden = which !== 'start';
+  $('#quizPlay').hidden = which !== 'play';
+  $('#quizResult').hidden = which !== 'result';
+}
+function refreshBest() {
+  const b = store.get('quizBest', null);
+  $('#bestBanner').innerHTML = b
+    ? `<i class="fa-solid fa-crown"></i> أفضل نتيجة ليك: ${b.pct}% — ${b.score} نقطة`
+    : '<i class="fa-solid fa-crown"></i> أول مرة تلعب؟ خلّي أفضل نتيجة ليك!';
+}
+$('#startQuizBtn').addEventListener('click', startQuiz);
+$('#againBtn').addEventListener('click', () => { Sound.click(); showCard('start'); refreshBest(); });
+function startQuiz() {
+  Sound.notify();
+  const pool = quizCat === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.cat === quizCat);
+  quiz = { list: shuffle(pool).slice(0, 8), idx: 0, score: 0, correct: 0, time: 0, wrong: [], marks: [], tInt: null };
+  showCard('play');
+  renderQ();
+}
+function renderQ() {
+  const q = quiz.list[quiz.idx];
+  $('#qCount').textContent = `${quiz.idx + 1}/${quiz.list.length}`;
+  $('#qDots').innerHTML = quiz.list.map((_, i) =>
+    `<span class="q-dot ${i < quiz.marks.length ? (quiz.marks[i] ? 'done' : 'bad') : (i === quiz.idx ? 'now' : '')}"></span>`).join('');
+  $('#qCat').innerHTML = `<i class="fa-solid fa-layer-group"></i> ${CAT_NAMES[q.cat]}`;
+  $('#qText').textContent = q.q;
+  $('#qOpts').innerHTML = q.opts.map((o, i) =>
+    `<button class="q-opt" data-i="${i}"><span class="opt-letter">${OPT_LETTERS[i]}</span><span>${o}</span></button>`).join('');
+  $$('#qOpts .q-opt').forEach(b => b.addEventListener('click', () => answer(+b.dataset.i)));
+  $('#qExplain').className = 'q-explain';
+  $('#nextBtn').hidden = true;
+  startTimer();
+}
+function startTimer() {
+  clearInterval(quiz.tInt);
+  quiz.tLeft = Q_TIME;
+  $('#qTimeLeft').textContent = Q_TIME;
+  $('#qTimerFill').style.transition = 'none';
+  $('#qTimerFill').style.width = '100%';
+  $('#qTimerFill').style.background = 'var(--mint)';
+  requestAnimationFrame(() => requestAnimationFrame(() => { $('#qTimerFill').style.transition = 'width 1s linear, background .3s'; }));
+  $('#qTimer').classList.remove('urgent');
+  quiz.tInt = setInterval(() => {
+    quiz.tLeft--; quiz.time++;
+    $('#qTimeLeft').textContent = Math.max(0, quiz.tLeft);
+    $('#qTimerFill').style.width = (Math.max(0, quiz.tLeft) / Q_TIME * 100) + '%';
+    if (quiz.tLeft <= 5) { $('#qTimer').classList.add('urgent'); $('#qTimerFill').style.background = 'var(--danger)'; }
+    if (quiz.tLeft <= 0) { clearInterval(quiz.tInt); answer(null); }
+  }, 1000);
+}
+function answer(i) {
+  clearInterval(quiz.tInt);
+  const q = quiz.list[quiz.idx];
+  const btns = $$('#qOpts .q-opt');
+  btns.forEach(b => b.disabled = true);
+  const ok = i === q.a;
+  quiz.marks.push(ok);
+  if (ok) {
+    quiz.score += 10 + Math.ceil(quiz.tLeft / 4);
+    quiz.correct++;
+    Sound.correct();
+  } else {
+    quiz.wrong.push(q);
+    Sound.wrong();
+    if (i !== null) btns[i].classList.add('wrong');
+  }
+  if (btns[q.a]) btns[q.a].classList.add('correct');
+  const ex = $('#qExplain');
+  ex.querySelector('span').textContent = i === null
+    ? `انتهى الوقت! الإجابة الصحيحة: ${q.opts[q.a]} — ${q.ex}`
+    : q.ex;
+  ex.classList.add('show');
+  const last = quiz.idx === quiz.list.length - 1;
+  $('#nextBtn').hidden = false;
+  $('#nextBtn').innerHTML = last ? 'النتيجة <i class="fa-solid fa-flag-checkered"></i>' : 'التالي <i class="fa-solid fa-arrow-left"></i>';
+}
+$('#nextBtn').addEventListener('click', () => {
+  Sound.click();
+  quiz.idx++;
+  if (quiz.idx >= quiz.list.length) finishQuiz(); else renderQ();
+});
+function finishQuiz() {
+  showCard('result');
+  const total = quiz.list.length;
+  const pct = Math.round(quiz.correct / total * 100);
+  $('#srPct').textContent = pct + '%';
+  $('#scoreRing').style.background = `conic-gradient(var(--mint) ${pct}%, rgba(128,128,128,.18) 0)`;
+  $('#srTitle').textContent = pct >= 85 ? 'عبقري زراعي! 🏆' : pct >= 60 ? 'أداء جيد جدًا 🌱' : 'محتاج مراجعة بسيطة 📚';
+  $('#rcScore').textContent = quiz.score;
+  $('#rcCorrect').textContent = quiz.correct;
+  $('#rcWrong').textContent = total - quiz.correct;
+  $('#rcTime').textContent = quiz.time;
+  $('#reviewList').innerHTML = quiz.wrong.length
+    ? quiz.wrong.map(q => `
+        <div class="review-item bad">
+          <div class="rv-q">❌ ${q.q}</div>
+          <div class="rv-a"><b style="color:#22C55E">الصحيح:</b> ${q.opts[q.a]}<br><b style="color:var(--gold)">ليه؟</b> ${q.ex}</div>
+        </div>`).join('')
+    : '<div class="review-item good">🎉 ممتاز! مفيش أي إجابة غلط — بتستاهل كوباية شاي على بعل 😄</div>';
+  const best = store.get('quizBest', null);
+  if (!best || quiz.score > best.score) store.set('quizBest', { score: quiz.score, pct });
+  if (window.Swal) Swal.fire({
+    icon: 'success', title: 'انتهى التحدي!',
+    text: `نتيجتك: ${quiz.score} نقطة (${pct}%)`,
+    confirmButtonText: 'تمام', confirmButtonColor: '#0F5132'
+  });
+  Sound.notify();
+}
+refreshBest();
+
+/* ---------- 14) المجتمع: أزرار الإعجاب ---------- */
+$$('.like-btn').forEach(btn => {
+  const id = btn.dataset.id, base = +btn.dataset.base || 0;
+  const sync = () => {
+    const likes = store.get('likes', {});
+    const is = !!likes[id];
+    btn.classList.toggle('liked', is);
+    btn.querySelector('span').textContent = base + (is ? 1 : 0);
+    btn.querySelector('i').className = is ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+  };
+  btn.addEventListener('click', () => {
+    const likes = store.get('likes', {});
+    likes[id] = !likes[id];
+    store.set('likes', likes);
+    sync(); Sound.click();
+  });
+  sync();
+});
+
+/* ---------- 15) زر "ابنّني لما الكورسات تنزل" ---------- */
+$('#notifyBtn').addEventListener('click', () => {
+  if (store.get('notifyCourses', false)) {
+    toast('info', 'مسجّل بالفعل ✅ هنبلّغك فور الإضافة');
+    return;
+  }
+  store.set('notifyCourses', true);
+  Sound.notify();
+  if (window.Swal) Swal.fire({
+    icon: 'success', title: 'تم التسجيل 🌟',
+    text: 'هنفعّل الإشعار فور إضافة أول كورس — تابع المنصة!',
+    confirmButtonText: 'تمام', confirmButtonColor: '#0F5132'
+  });
+});
+
+/* ---------- 16) المساعد الذكي «رفيق الزراعة» ---------- */
+const CHAT_REPLIES = [
+  { k: ['سماد', 'تسميد', 'نيتروجين', 'npk', 'يوريا', 'فوسفور', 'بوتاسيوم'],
+    r: '🌿 للتسميد المتوازن: ابدأ بتحليل تربة، ثم افتح «حاسبة السماد الذكية» في قسم المختبرات فوق 👆 وحدد محصولك ومساحتك — هتقولك كمية اليوريا والسوبر فوسفات والبوتاسيوم بالكيلو بالظبط.' },
+  { k: ['ري', 'سقي', 'مياه', 'تنقيط', 'رش'],
+    r: '💧 القاعدة الذهبية: اسقِ لما التربة تحتاج مش بجدول ثابت — افحص الرطوبة على عمق 15 سم بإصبعك. الري بالتنقيط يوفر حتى 60% من المياه ويقلل الأمراض الفطرية كمان.' },
+  { k: ['مرض', 'آفة', 'حشرة', 'فطر', 'اصفرار', 'بقع', 'دودة', 'من'],
+    r: '🔍 ارفع صورة الورقة المصابة في «تشخيص أمراض النبات» من قسم المختبرات 👆 وهنحللها فورًا. وافتكر: التهوية الجيدة وتجنب الرش مساءً أفضل وقاية من الفطريات.' },
+  { k: ['تربة', 'ph', 'حمضية', 'قلوية', 'ملوحة', 'خصوبة', 'دبال'],
+    r: '🧪 التربة الصحية أساس كل شيء: pH بين 6–7 مناسب لأغلب المحاصيل، وأضف كمبوست متحلل سنويًا لرفع المادة العضوية. جرّب كمان «دورة النيتروجين» التفاعلية في المختبرات لتفهم إيه اللي بيحصل تحت الأرض.' },
+  { k: ['قمح', 'ذرة', 'طماطم', 'بطاطس', 'محصول', 'بذور', 'شتلات', 'نخيل'],
+    r: '🌾 لكل محصول ظروفه: المواعيد والكميات بتختلف حسب المنطقة والتربة. جرّب حاسبة السماد لتحديد الاحتياجات، ولو عندك سؤال أدق اكتبه هنا بالتفصيل (المحصول + المنطقة + المشكلة).' },
+  { k: ['مرحبا', 'سلام', 'ازيك', 'إزيك', 'اهلا', 'أهلا', 'هاي', 'صباح', 'مساء'],
+    r: 'أهلاً بيك يا صديقي 🌱 أنا رفيقك الزراعي الذكي — اسألني عن التسميد، الري، أمراض النبات، أو أي مشكلة في مزرعتك!' }
+];
+const CHAT_DEFAULT = 'سؤال ممتاز! 🌱 أهم النصائح: راقب نباتاتك يوميًا، حافظ على تسميد متوازن، ولا تسقِ إلا عند الحاجة. (أنا حاليًا في وضع المحاكاة — سيتم ربطي بنموذج ذكاء اصطناعي حقيقي قريبًا).';
+const SUGGS = ['كيف أسمّد القمح؟', 'متى أسقي الطماطم؟', 'أوراق نباتي تصفرت', 'إزاي أحسّن تربتي؟'];
+let chatHistory = store.get('chat', []);
+let chatBusy = false;
+
+function pushMsg(role, text, save = true) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + role;
+  d.textContent = text;
+  $('#chatMsgs').appendChild(d);
+  $('#chatMsgs').scrollTop = 1e9;
+  if (save) {
+    chatHistory.push({ role, text });
+    chatHistory = chatHistory.slice(-30);
+    store.set('chat', chatHistory);
+  }
+}
+function localReply(t) {
+  const s = t.toLowerCase();
+  for (const r of CHAT_REPLIES) if (r.k.some(k => s.includes(k))) return r.r;
+  return CHAT_DEFAULT;
+}
+async function askRemote(text) {
+  if (!AI_CONFIG.chatWebhook) return null;
+  try {
+    const res = await fetch(AI_CONFIG.chatWebhook, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, source: 'agrilearn' })
+    });
+    const j = await res.json();
+    return j.reply || j.output || j.text || null;
+  } catch (e) { return null; }
+}
+async function sendMsg(text) {
+  if (!text.trim() || chatBusy) return;
+  chatBusy = true;
+  pushMsg('user', text);
+  const ty = document.createElement('div');
+  ty.className = 'msg bot typing';
+  ty.innerHTML = '<span></span><span></span><span></span>';
+  $('#chatMsgs').appendChild(ty);
+  $('#chatMsgs').scrollTop = 1e9;
+  const remote = await askRemote(text);
+  await new Promise(r => setTimeout(r, remote ? 250 : 750 + Math.random() * 450));
+  ty.remove();
+  pushMsg('bot', remote || localReply(text));
+  Sound.notify();
+  chatBusy = false;
+}
+$('#chatForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const v = $('#chatText').value;
+  $('#chatText').value = '';
+  sendMsg(v);
+});
+SUGGS.forEach(s => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'sugg'; b.textContent = s;
+  b.addEventListener('click', () => sendMsg(s));
+  $('#chatSugg').appendChild(b);
+});
+const chatPanel = $('#chatPanel'), chatFab = $('#chatFab');
+const FAB_CLOSED = '<i class="fa-solid fa-robot"></i><span class="ping"></span>';
+const FAB_OPEN = '<i class="fa-solid fa-xmark"></i>';
+function welcomeIfEmpty() {
+  if ($('#chatMsgs').children.length) return;
+  if (chatHistory.length) chatHistory.forEach(m => pushMsg(m.role, m.text, false));
+  else pushMsg('bot', 'أهلاً بيك في رفيق الزراعة 🌱 أنا مساعدك الذكي — اسألني عن التسميد، الري، أمراض النبات، أو أي حاجة في مزرعتك!', false);
+}
+chatFab.addEventListener('click', () => {
+  Sound.click();
+  const open = chatPanel.classList.toggle('open');
+  chatFab.innerHTML = open ? FAB_OPEN : FAB_CLOSED;
+  if (open) welcomeIfEmpty();
+});
+$('#chatClose').addEventListener('click', () => {
+  chatPanel.classList.remove('open');
+  chatFab.innerHTML = FAB_CLOSED;
+});
+$('#chatClear').addEventListener('click', () => {
+  chatHistory = []; store.set('chat', []);
+  $('#chatMsgs').innerHTML = '';
+  pushMsg('bot', 'تم مسح المحادثة 🌱 اسألني أي حاجة تانية!', false);
+});
+
+/* ---------- 17) لمسات أخيرة ---------- */
+$('#year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
