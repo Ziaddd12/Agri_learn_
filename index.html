@@ -1,0 +1,2149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriLearn | رفيق الزراعة — منصة التعليم الزراعي الذكية</title>
+  <meta name="description" content="منصة AgriLearn التعليمية التفاعلية لطلاب كليات الزراعة والمزارعين: دورات أكاديمية، مختبرات ذكية، تشخيص أمراض النبات، مساعد ذكاء اصطناعي، وساحة اختبارات ممتعة." />
+  <meta name="theme-color" content="#0F5132" />
+
+  <!-- ===== الخط: Cairo (يدعم العربية بالكامل) ===== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- ===== Tailwind CSS (CDN) ===== -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    /* إعدادات Tailwind: الوضع الداكن عبر class + لوحة ألوان المنصة */
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0F5132',
+            primary2: '#14603A',
+            mint: '#20C997',
+            gold: '#FFC107',
+            ink: '#0B1F17'
+          },
+          fontFamily: { cairo: ['Cairo', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+          keyframes: {
+            float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-12px)' } },
+            pop: { '0%': { transform: 'scale(.85)' }, '60%': { transform: 'scale(1.12)' }, '100%': { transform: 'scale(1)' } }
+          },
+          animation: { float: 'float 6s ease-in-out infinite', pop: 'pop .45s ease both' }
+        }
+      }
+    };
+  </script>
+
+  <!-- ===== FontAwesome 6 ===== -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <!-- ===== SweetAlert2 ===== -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    /* ============ متغيرات وأساسيات ============ */
+    :root { --primary: #0F5132; --mint: #20C997; --gold: #FFC107; }
+    html { scroll-behavior: smooth; }
+    body { text-rendering: optimizeLegibility; }
+    .bg-app { background: linear-gradient(180deg, #f4faf7 0%, #ffffff 45%, #ecf7f1 100%); }
+    .dark .bg-app { background: linear-gradient(180deg, #06170F 0%, #0A241A 50%, #06170F 100%); }
+
+    /* شريط التمرير */
+    ::-webkit-scrollbar { width: 9px; height: 9px; }
+    ::-webkit-scrollbar-thumb { background: rgba(15,81,50,.35); border-radius: 99px; }
+    .dark ::-webkit-scrollbar-thumb { background: rgba(32,201,151,.35); }
+    ::-webkit-scrollbar-track { background: transparent; }
+
+    /* ============ مكونات عامة ============ */
+    .glass { background: rgba(255,255,255,.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(15,81,50,.08); }
+    .dark .glass { background: rgba(9,31,22,.72); border-color: rgba(32,201,151,.14); }
+    .glow-hover { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s; }
+    .glow-hover:hover { transform: translateY(-6px); box-shadow: 0 20px 45px -14px rgba(32,201,151,.45); }
+    .btn-primary { background: linear-gradient(135deg, #0F5132 0%, #166534 55%, #20C997 135%); box-shadow: 0 10px 26px -10px rgba(15,81,50,.55); transition: filter .3s, transform .3s; }
+    .btn-primary:hover { filter: brightness(1.12); transform: translateY(-2px); }
+    .btn-ghost { border: 1.5px solid rgba(32,201,151,.45); color: #0F5132; transition: .3s; }
+    .dark .btn-ghost { color: #4ce0b6; }
+    .btn-ghost:hover { background: rgba(32,201,151,.12); border-color: var(--mint); transform: translateY(-2px); }
+    .icon-btn { width: 2.5rem; height: 2.5rem; border-radius: .85rem; display: grid; place-items: center; border: 1px solid rgba(15,81,50,.14); background: rgba(255,255,255,.75); color: #0F5132; transition: .3s; flex: none; }
+    .dark .icon-btn { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); color: #7de8c8; }
+    .icon-btn:hover { transform: translateY(-2px); border-color: var(--mint); color: var(--mint); }
+    .kicker { display: inline-flex; align-items: center; gap: .5rem; font-weight: 800; font-size: .8rem; color: var(--primary); background: rgba(32,201,151,.13); border: 1px solid rgba(32,201,151,.3); padding: .35rem 1rem; border-radius: 999px; }
+    .dark .kicker { color: #4ce0b6; }
+    .text-gradient { background: linear-gradient(90deg, #20C997 10%, #FFC107 90%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+    /* روابط التنقل */
+    .nav-link { padding: .5rem .85rem; border-radius: .8rem; font-weight: 700; font-size: .88rem; color: #475569; transition: .25s; white-space: nowrap; }
+    .dark .nav-link { color: #cbd5e1; }
+    .nav-link:hover { color: var(--primary); background: rgba(32,201,151,.09); }
+    .dark .nav-link:hover { color: #20C997; }
+    .nav-link.active { color: var(--primary); background: rgba(32,201,151,.16); }
+    .dark .nav-link.active { color: #20C997; background: rgba(32,201,151,.12); }
+
+    /* شريط الأخبار المتحرك */
+    .ticker-track { display: flex; gap: 3.5rem; width: max-content; animation: ticker 34s linear infinite; padding-left: 10rem; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .ticker:hover .ticker-track { animation-play-state: paused; }
+
+    /* ظهور تدريجي عند التمرير */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+    .reveal.revealed { opacity: 1; transform: none; }
+
+    /* نبضة شارة النقاط */
+    .points-pop { animation: pop .45s ease; }
+
+    /* ============ تبويبات الأقسام ============ */
+    .dept-tab { --tc: #0F5132; padding: .55rem 1.2rem; border-radius: 999px; font-weight: 800; font-size: .85rem; border: 1.5px solid rgba(15,81,50,.16); color: #334155; background: rgba(255,255,255,.65); transition: .3s; cursor: pointer; }
+    .dark .dept-tab { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.14); color: #cbd5e1; }
+    .dept-tab:hover { border-color: var(--tc); color: var(--tc); transform: translateY(-2px); }
+    .dept-tab.active { background: var(--tc); border-color: var(--tc); color: #fff !important; box-shadow: 0 10px 22px -8px rgba(15,81,50,.45); }
+
+    /* ============ شرائح الاختيار ============ */
+    .chip { padding: .5rem 1.15rem; border-radius: 999px; font-weight: 700; font-size: .85rem; border: 1.5px solid rgba(15,81,50,.16); color: #475569; cursor: pointer; transition: .25s; background: transparent; }
+    .dark .chip { border-color: rgba(255,255,255,.14); color: #cbd5e1; }
+    .chip:hover { border-color: var(--mint); color: var(--mint); }
+    .chip.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 8px 18px -8px rgba(15,81,50,.5); }
+
+    /* ============ مدخلات Range ============ */
+    input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 99px; outline: none; background: linear-gradient(90deg, var(--mint) var(--val, 50%), rgba(148,163,184,.3) var(--val, 50%)); }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 4px solid var(--mint); box-shadow: 0 3px 10px rgba(0,0,0,.25); cursor: pointer; transition: transform .2s; }
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    input[type=range]::-moz-range-thumb { width: 13px; height: 13px; border-radius: 50%; background: #fff; border: 4px solid var(--mint); cursor: pointer; }
+
+    /* ============ دورة النيتروجين (SVG) ============ */
+    .edge { stroke: #94a3b8; stroke-width: 2; fill: none; opacity: .5; transition: all .45s; stroke-dasharray: 6 5; }
+    .edge.lit { stroke: var(--mint); stroke-width: 4; opacity: 1; stroke-dasharray: none; filter: drop-shadow(0 0 6px rgba(32,201,151,.8)); }
+    .cnode { cursor: pointer; transition: opacity .45s; }
+    .cnode.dim { opacity: .28; }
+    .cnode text { font-weight: 800; }
+    .edge-label { font-size: 11px; font-weight: 800; fill: #64748b; }
+    .dark .edge-label { fill: #94a3b8; }
+
+    /* ============ منطقة رفع الصور ============ */
+    .dropzone { border: 2px dashed rgba(32,201,151,.5); transition: .3s; cursor: pointer; }
+    .dropzone:hover, .dropzone.dragover { border-color: var(--mint); background: rgba(32,201,151,.08); }
+
+    /* ============ أزرار خيارات الاختبار ============ */
+    .opt-btn { width: 100%; text-align: start; padding: .9rem 1.1rem; border-radius: 1rem; border: 1.5px solid rgba(15,81,50,.14); background: rgba(255,255,255,.65); font-weight: 700; transition: .25s; cursor: pointer; display: flex; align-items: center; gap: .75rem; }
+    .dark .opt-btn { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.12); }
+    .opt-btn:hover:not(:disabled) { border-color: var(--mint); transform: translateX(-4px); }
+    .opt-btn:disabled { cursor: default; opacity: .9; }
+    .opt-btn.correct { background: rgba(16,185,129,.16) !important; border-color: #10b981 !important; color: #065f46; }
+    .dark .opt-btn.correct { color: #6ee7b7; }
+    .opt-btn.wrong { background: rgba(239,68,68,.12) !important; border-color: #ef4444 !important; color: #991b1b; }
+    .dark .opt-btn.wrong { color: #fca5a5; }
+
+    /* ============ ودجت المحادثة ============ */
+    @keyframes pulseRing { 0% { box-shadow: 0 0 0 0 rgba(32,201,151,.55); } 70% { box-shadow: 0 0 0 18px rgba(32,201,151,0); } 100% { box-shadow: 0 0 0 0 rgba(32,201,151,0); } }
+    .chat-pulse { animation: pulseRing 2.4s infinite; }
+    .typing-dot { width: 7px; height: 7px; border-radius: 50%; background: #94a3b8; display: inline-block; animation: blink 1.2s infinite; }
+    .typing-dot:nth-child(2) { animation-delay: .2s; }
+    .typing-dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes blink { 0%,80%,100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+    .bubble-bot { background: rgba(32,201,151,.12); border: 1px solid rgba(32,201,151,.22); border-radius: 1.1rem 1.1rem 1.1rem .3rem; }
+    .bubble-user { background: linear-gradient(135deg, #0F5132, #20C997); color: #fff; border-radius: 1.1rem 1.1rem .3rem 1.1rem; }
+
+    /* مؤشر دوّار صغير */
+    .sk-circle { width: 16px; height: 16px; border: 3px solid rgba(32,201,151,.25); border-top-color: var(--mint); border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* شريط تقدم متلألئ */
+    .bar-shine { position: relative; overflow: hidden; }
+    .bar-shine::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent); animation: shine 2.2s infinite; }
+    @keyframes shine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+
+    /* احترام تقليل الحركة */
+    @media (prefers-reduced-motion: reduce) {
+      .ticker-track { animation: none; }
+      .chat-pulse { animation: none; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
+  </style>
+
+  <script>
+    /* استعادة الثيم المحفوظ قبل رسم الصفحة (منع الوميض) */
+    (function () {
+      try {
+        var th = localStorage.getItem('agri_theme');
+        if (th === 'dark' || (!th && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) { }
+    })();
+  </script>
+</head>
+
+<body class="font-cairo bg-app text-slate-800 dark:text-slate-100 min-h-screen antialiased selection:bg-mint/30">
+  <noscript>
+    <div style="padding:1rem;background:#FFC107;color:#0F5132;font-weight:800;text-align:center">يتطلب تشغيل منصة AgriLearn تفعيل JavaScript في المتصفح.</div>
+  </noscript>
+
+  <!-- ==================== ترويسة الموقع ==================== -->
+  <header id="siteHeader" class="sticky top-0 z-40 glass shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 h-16 md:h-[72px] flex items-center gap-2">
+      <!-- الشعار -->
+      <a href="#home" class="flex items-center gap-2.5 me-2 shrink-0" aria-label="AgriLearn — الرئيسية">
+        <span class="w-10 h-10 md:w-11 md:h-11 rounded-2xl btn-primary grid place-items-center text-white text-lg"><i class="fa-solid fa-seedling"></i></span>
+        <span class="leading-tight">
+          <span class="block font-black text-lg text-primary dark:text-white">AgriLearn</span>
+          <span class="block text-[11px] font-bold text-mint">رفيق الزراعة</span>
+        </span>
+      </a>
+
+      <!-- روابط التنقل السريعة (سطح المكتب) -->
+      <nav id="mainNav" class="hidden lg:flex items-center gap-1 ms-4">
+        <a href="#home" class="nav-link active" data-section="home" data-i18n="nav_home">الرئيسية</a>
+        <a href="#courses" class="nav-link" data-section="courses" data-i18n="nav_courses">الدورات</a>
+        <a href="#labs" class="nav-link" data-section="labs" data-i18n="nav_labs">المختبرات الذكية</a>
+        <a href="#diagnostic" class="nav-link" data-i18n="nav_diag">التشخيص الذكي</a>
+        <a href="#quiz" class="nav-link" data-section="quiz" data-i18n="nav_quiz">ساحة الاختبارات</a>
+        <a href="#community" class="nav-link" data-section="community" data-i18n="nav_community">المجتمع</a>
+        <a href="#" id="navChat" class="nav-link" data-i18n="nav_ai">المساعد الذكي</a>
+      </nav>
+
+      <div class="flex-1"></div>
+
+      <!-- شارة النقاط + أدوات التحكم -->
+      <button id="pointsPill" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold/15 border border-gold/40 text-gold font-black text-sm hover:scale-105 transition" title="نقاط الخبرة">
+        <i class="fa-solid fa-bolt"></i><span id="pointsVal">0</span><span class="text-[10px]">XP</span>
+      </button>
+      <button id="soundBtn" class="icon-btn" title="تشغيل/كتم الأصوات"><i id="soundIcon" class="fa-solid fa-volume-high"></i></button>
+      <button id="langBtn" class="icon-btn text-xs font-black" title="Change language">EN</button>
+      <button id="themeBtn" class="icon-btn" title="الوضع الليلي/النهاري"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
+      <button id="profileBtn" class="w-10 h-10 rounded-full btn-primary text-white grid place-items-center font-black text-lg hover:scale-105 transition shrink-0" title="ملفي الشخصي">ع</button>
+      <button id="menuBtn" class="icon-btn lg:hidden" aria-label="القائمة"><i class="fa-solid fa-bars"></i></button>
+    </div>
+
+    <!-- قائمة الجوال -->
+    <div id="mobileMenu" class="lg:hidden hidden border-t border-black/5 dark:border-white/10 px-4 py-3 space-y-1 bg-white/90 dark:bg-ink/90 backdrop-blur-xl">
+      <a href="#home" class="nav-link block" data-i18n="nav_home">الرئيسية</a>
+      <a href="#courses" class="nav-link block" data-i18n="nav_courses">الدورات</a>
+      <a href="#labs" class="nav-link block" data-i18n="nav_labs">المختبرات الذكية</a>
+      <a href="#diagnostic" class="nav-link block" data-i18n="nav_diag">التشخيص الذكي</a>
+      <a href="#quiz" class="nav-link block" data-i18n="nav_quiz">ساحة الاختبارات</a>
+      <a href="#community" class="nav-link block" data-i18n="nav_community">المجتمع</a>
+      <button id="navChatM" class="nav-link block w-full text-start" data-i18n="nav_ai">المساعد الذكي</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ==================== قسم البطل Hero ==================== -->
+    <section id="home" class="relative overflow-hidden pt-10 md:pt-16 scroll-mt-24">
+      <!-- زخارف الخلفية -->
+      <div class="absolute -top-24 -start-24 w-96 h-96 bg-mint/15 dark:bg-mint/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute top-40 -end-32 w-[28rem] h-[28rem] bg-gold/10 dark:bg-gold/5 rounded-full blur-3xl pointer-events-none"></div>
+      <i class="fa-solid fa-wheat-awn absolute top-24 end-[8%] text-5xl text-primary/10 dark:text-mint/10 animate-float hidden md:block pointer-events-none"></i>
+      <i class="fa-solid fa-tractor absolute bottom-24 start-[6%] text-6xl text-primary/10 dark:text-mint/10 animate-float hidden md:block pointer-events-none" style="animation-delay:1.5s"></i>
+
+      <div class="relative max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
+        <!-- النص التعريفي -->
+        <div>
+          <span class="kicker reveal"><i class="fa-solid fa-leaf"></i><span data-i18n="hero_badge">منصة التعليم الزراعي الأولى في المنطقة العربية</span></span>
+          <h1 class="mt-5 text-4xl md:text-6xl font-black leading-[1.3] reveal">
+            <span data-i18n="hero_t1">تمكين أجيال</span>
+            <span class="text-gradient" data-i18n="hero_t2">الزراعة الذكية</span>
+            <span data-i18n="hero_t3">والبحث العلمي</span>
+          </h1>
+          <p class="mt-5 text-slate-600 dark:text-slate-300 text-lg leading-relaxed reveal" data-i18n="hero_sub">منصة تفاعلية واحدة تجمع دورات أكاديمية متخصصة، ومختبرات ذكية للحساب والتشخيص، ومجتمعًا من الطلاب والمزارعين — لأن العلم يبدأ من الأرض.</p>
+
+          <div class="mt-8 flex flex-wrap gap-3 reveal">
+            <a href="#courses" class="btn-primary text-white font-bold px-7 py-3.5 rounded-2xl inline-flex items-center gap-2"><i class="fa-solid fa-graduation-cap"></i><span data-i18n="hero_cta1">ابدأ رحلة التعلم</span></a>
+            <a href="#labs" class="btn-ghost font-bold px-7 py-3.5 rounded-2xl inline-flex items-center gap-2 bg-white/50 dark:bg-white/5"><i class="fa-solid fa-flask-vial"></i><span data-i18n="hero_cta2">استكشف المختبرات</span></a>
+          </div>
+
+          <div class="mt-8 flex items-center gap-3 reveal">
+            <div class="flex -space-x-3 space-x-reverse">
+              <span class="w-10 h-10 rounded-full ring-2 ring-white dark:ring-ink grid place-items-center text-white font-black bg-gradient-to-br from-emerald-500 to-teal-700">أ</span>
+              <span class="w-10 h-10 rounded-full ring-2 ring-white dark:ring-ink grid place-items-center text-white font-black bg-gradient-to-br from-pink-500 to-rose-600">س</span>
+              <span class="w-10 h-10 rounded-full ring-2 ring-white dark:ring-ink grid place-items-center text-white font-black bg-gradient-to-br from-amber-500 to-orange-600">م</span>
+              <span class="w-10 h-10 rounded-full ring-2 ring-white dark:ring-ink grid place-items-center text-white font-black bg-gradient-to-br from-sky-500 to-blue-700">+</span>
+            </div>
+            <p class="text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="hero_trust">انضم إلى أكثر من 12 ألف طالب ومزارع</p>
+          </div>
+        </div>
+
+        <!-- بطاقة لوحة المتعلم -->
+        <div class="relative reveal">
+          <div class="glass rounded-[2rem] p-6 shadow-2xl animate-float max-w-md mx-auto lg:ms-auto">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <span class="w-12 h-12 rounded-2xl btn-primary grid place-items-center text-white text-xl shrink-0"><i class="fa-solid fa-user-graduate"></i></span>
+                <div>
+                  <p class="font-black" data-i18n="dash_hi">مرحبًا، يا مزارع! 👋</p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 font-bold" data-i18n="dash_sub">لديك درسان واختبار اليوم</p>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 rounded-full bg-orange-500/15 text-orange-500 font-black text-xs shrink-0"><i class="fa-solid fa-fire"></i> 5</span>
+            </div>
+
+            <div class="mt-5 flex items-center gap-4">
+              <svg width="104" height="104" viewBox="0 0 120 120" class="shrink-0">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(148,163,184,.25)" stroke-width="11" />
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#20C997" stroke-width="11" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="104.5" transform="rotate(-90 60 60)" />
+                <text x="60" y="58" text-anchor="middle" font-size="21" font-weight="800" fill="currentColor">68%</text>
+                <text x="60" y="75" text-anchor="middle" font-size="10" fill="currentColor" opacity=".6" data-i18n="dash_week">هذا الأسبوع</text>
+              </svg>
+              <ul class="flex-1 space-y-2.5 text-sm font-bold">
+                <li class="flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-mint/20 text-mint grid place-items-center text-[10px] shrink-0"><i class="fa-solid fa-check"></i></span><span data-i18n="dash_t1">درس: بنية التربة</span></li>
+                <li class="flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-mint/20 text-mint grid place-items-center text-[10px] shrink-0"><i class="fa-solid fa-check"></i></span><span data-i18n="dash_t2">حل 10 أسئلة (7/10)</span></li>
+                <li class="flex items-center gap-2 text-slate-400"><span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-white/10 grid place-items-center text-[10px] shrink-0"><i class="fa-solid fa-clock"></i></span><span data-i18n="dash_t3">مشاهدة محاضرة الري</span></li>
+              </ul>
+            </div>
+
+            <div class="mt-5 rounded-2xl bg-gradient-to-l from-sky-500/15 to-mint/10 border border-sky-400/20 px-4 py-3 flex items-center gap-3">
+              <i class="fa-solid fa-cloud-sun text-2xl text-sky-500"></i>
+              <div>
+                <p class="font-black text-sm" data-i18n="wx_t">28°C — غائم جزئيًا</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold" data-i18n="wx_s">الظروف مثالية لري المساء 💧</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="absolute -bottom-5 -start-2 glass rounded-2xl px-4 py-3 shadow-xl animate-float hidden sm:flex items-center gap-2" style="animation-delay:.8s">
+            <span class="w-9 h-9 rounded-xl bg-gold/20 text-gold grid place-items-center"><i class="fa-solid fa-trophy"></i></span>
+            <div><p class="text-xs text-slate-500 dark:text-slate-400 font-bold" data-i18n="dash_ach">إنجاز جديد</p><p class="font-black text-sm text-gold">+50 XP</p></div>
+          </div>
+          <div class="absolute -top-7 -end-3 glass rounded-2xl px-4 py-2.5 shadow-xl animate-float hidden sm:flex items-center gap-2" style="animation-delay:1.6s">
+            <i class="fa-solid fa-circle-play text-2xl text-mint"></i>
+            <p class="font-black text-sm" data-i18n="dash_new">درس جديد متاح 🎬</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- شريط الإحصائيات المتحركة -->
+      <div class="relative max-w-7xl mx-auto px-4 mt-14">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass glow-hover rounded-3xl p-6 text-center reveal">
+            <span class="mx-auto w-12 h-12 rounded-2xl bg-mint/15 text-mint grid place-items-center text-xl mb-3"><i class="fa-solid fa-users"></i></span>
+            <p class="text-3xl font-black"><span class="counter" data-target="12480">0</span><span class="text-mint">+</span></p>
+            <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mt-1" data-i18n="stat1">طالب نشط</p>
+          </div>
+          <div class="glass glow-hover rounded-3xl p-6 text-center reveal">
+            <span class="mx-auto w-12 h-12 rounded-2xl bg-violet-500/15 text-violet-500 grid place-items-center text-xl mb-3"><i class="fa-solid fa-book-open"></i></span>
+            <p class="text-3xl font-black"><span class="counter" data-target="48">0</span><span class="text-mint">+</span></p>
+            <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mt-1" data-i18n="stat2">دورة متخصصة</p>
+          </div>
+          <div class="glass glow-hover rounded-3xl p-6 text-center reveal">
+            <span class="mx-auto w-12 h-12 rounded-2xl bg-gold/15 text-gold grid place-items-center text-xl mb-3"><i class="fa-solid fa-video"></i></span>
+            <p class="text-3xl font-black"><span class="counter" data-target="320">0</span><span class="text-mint">+</span></p>
+            <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mt-1" data-i18n="stat3">ساعة تدريب</p>
+          </div>
+          <div class="glass glow-hover rounded-3xl p-6 text-center reveal">
+            <span class="mx-auto w-12 h-12 rounded-2xl bg-rose-500/15 text-rose-500 grid place-items-center text-xl mb-3"><i class="fa-solid fa-star"></i></span>
+            <p class="text-3xl font-black"><span class="counter" data-target="94">0</span><span class="text-mint">%</span></p>
+            <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mt-1" data-i18n="stat4">نسبة الرضا</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- شريط الإعلانات المتحرك -->
+      <div class="relative max-w-7xl mx-auto px-4 mt-8 mb-2">
+        <div class="ticker glass rounded-2xl border border-mint/25 relative overflow-hidden" dir="ltr">
+          <span class="absolute left-0 top-0 bottom-0 z-10 px-4 flex items-center gap-2 bg-gold text-ink text-xs md:text-sm font-black shadow-lg">
+            <i class="fa-solid fa-bullhorn"></i><span data-i18n="ticker_label">آخر الأخبار</span>
+          </span>
+          <div id="tickerTrack" class="ticker-track py-3 text-sm font-bold text-slate-600 dark:text-slate-300"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== المركز الأكاديمي: الدورات ==================== -->
+    <section id="courses" class="py-16 md:py-24 scroll-mt-24 relative">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center max-w-2xl mx-auto mb-10 reveal">
+          <span class="kicker"><i class="fa-solid fa-graduation-cap"></i><span data-i18n="courses_kicker">المركز الأكاديمي</span></span>
+          <h2 class="mt-4 text-3xl md:text-5xl font-black" data-i18n="courses_title">الدورات والمساقات</h2>
+          <p class="mt-4 text-slate-600 dark:text-slate-300 leading-relaxed" data-i18n="courses_sub">محتوى علمي منسّق من نخبة أساتذة كليات الزراعة — تابع تقدمك، حمّل الملخصات، واختبر نفسك بعد كل وحدة.</p>
+        </div>
+
+        <!-- تبويبات الأقسام الخمسة -->
+        <div id="deptTabs" class="flex flex-wrap justify-center gap-2.5 mb-10 reveal">
+          <button data-dept="all" class="dept-tab active" data-i18n="f_all">الكل</button>
+          <button data-dept="soil" class="dept-tab" style="--tc:#8B5CF6" data-i18n="f_soil">علم التربة والميكروبيولوجيا</button>
+          <button data-dept="genetics" class="dept-tab" style="--tc:#EC4899" data-i18n="f_genetics">وراثة المحاصيل</button>
+          <button data-dept="pathology" class="dept-tab" style="--tc:#EF4444" data-i18n="f_pathology">أمراض النبات</button>
+          <button data-dept="animal" class="dept-tab" style="--tc:#F59E0B" data-i18n="f_animal">الإنتاج الحيواني</button>
+          <button data-dept="irrigation" class="dept-tab" style="--tc:#06B6D4" data-i18n="f_irrigation">هندسة الري</button>
+        </div>
+
+        <!-- شبكة كروت الدورات (تُبنى ديناميكيًا) -->
+        <div id="coursesGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </div>
+    </section>
+
+    <!-- ==================== المختبرات الذكية ==================== -->
+    <section id="labs" class="py-16 md:py-24 scroll-mt-24 relative">
+      <div class="absolute top-1/3 -start-40 w-96 h-96 bg-mint/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="max-w-7xl mx-auto px-4 relative">
+        <div class="text-center max-w-2xl mx-auto mb-12 reveal">
+          <span class="kicker"><i class="fa-solid fa-flask-vial"></i><span data-i18n="labs_kicker">المختبرات الذكية</span></span>
+          <h2 class="mt-4 text-3xl md:text-5xl font-black" data-i18n="labs_title">أدوات الزراعة الدقيقة بين يديك</h2>
+          <p class="mt-4 text-slate-600 dark:text-slate-300 leading-relaxed" data-i18n="labs_sub">ثلاث أدوات عملية تحوّل النظرية إلى قرار ميداني: احسب خطة التسميد، افهم دورة النيتروجين، وشخّص أمراض النبات.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6">
+          <!-- ===== الأداة 1: حاسبة التسميد N-P-K ===== -->
+          <div class="glass rounded-3xl p-6 reveal">
+            <div class="flex items-center gap-3">
+              <span class="w-12 h-12 rounded-2xl bg-gold/15 text-gold grid place-items-center text-xl shrink-0"><i class="fa-solid fa-calculator"></i></span>
+              <div>
+                <h3 class="font-black text-lg" data-i18n="npk_t">حاسبة التسميد N-P-K</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-bold" data-i18n="npk_d">بيانات تربتك ← خطة تسميد تقديرية</p>
+              </div>
+            </div>
+
+            <div class="mt-5 space-y-5">
+              <div>
+                <label class="text-sm font-black mb-1.5 flex items-center gap-2"><i class="fa-solid fa-wheat-awn text-mint"></i><span data-i18n="npk_crop">نوع المحصول</span></label>
+                <select id="npkCrop" class="w-full rounded-xl border border-black/10 dark:border-white/15 bg-white/70 dark:bg-white/10 px-4 py-3 font-bold text-sm outline-none focus:border-mint transition"></select>
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <label class="text-sm font-black"><i class="fa-solid fa-ruler-combined text-mint"></i> <span data-i18n="npk_area">مساحة الأرض (فدان)</span></label>
+                  <span id="npkAreaV" class="text-sm font-black text-mint bg-mint/10 px-2.5 py-0.5 rounded-lg">5</span>
+                </div>
+                <input type="range" id="npkArea" min="1" max="20" value="5" />
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <label class="text-sm font-black"><i class="fa-solid fa-flask text-mint"></i> <span data-i18n="npk_n">النيتروجين المتاح N (ppm)</span></label>
+                  <span id="npkNV" class="text-sm font-black text-mint bg-mint/10 px-2.5 py-0.5 rounded-lg">30</span>
+                </div>
+                <input type="range" id="npkN" min="0" max="100" value="30" />
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <label class="text-sm font-black"><i class="fa-solid fa-flask text-mint"></i> <span data-i18n="npk_p">الفوسفور المتاح P (ppm)</span></label>
+                  <span id="npkPV" class="text-sm font-black text-mint bg-mint/10 px-2.5 py-0.5 rounded-lg">12</span>
+                </div>
+                <input type="range" id="npkP" min="0" max="50" value="12" />
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <label class="text-sm font-black"><i class="fa-solid fa-flask text-mint"></i> <span data-i18n="npk_k">البوتاسيوم المتاح K (ppm)</span></label>
+                  <span id="npkKV" class="text-sm font-black text-mint bg-mint/10 px-2.5 py-0.5 rounded-lg">120</span>
+                </div>
+                <input type="range" id="npkK" min="0" max="400" value="120" />
+              </div>
+
+              <button id="npkCalc" class="btn-primary w-full text-white font-black py-3.5 rounded-2xl"><i class="fa-solid fa-seedling"></i> <span data-i18n="npk_btn">احسب خطة التسميد</span></button>
+            </div>
+
+            <!-- نتيجة الحساب -->
+            <div id="npkResult" class="hidden mt-5 rounded-2xl border border-mint/30 bg-mint/5 p-4 space-y-3"></div>
+            <p id="npkHint" class="mt-4 text-[11px] text-slate-400 font-bold text-center" data-i18n="npk_hint">* نتائج تقديرية لأغراض التعليم — اعتمد تحليل مخبر معتمد للقرار النهائي.</p>
+          </div>
+
+          <!-- ===== الأداة 2: دورة النيتروجين التفاعلية ===== -->
+          <div class="lg:col-span-2 glass rounded-3xl p-6 reveal">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <span class="w-12 h-12 rounded-2xl bg-cyan-500/15 text-cyan-500 grid place-items-center text-xl shrink-0"><i class="fa-solid fa-arrows-spin"></i></span>
+                <div>
+                  <h3 class="font-black text-lg" data-i18n="n2_t">دورة النيتروجين التفاعلية</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 font-bold" data-i18n="n2_d">اضغط على أي مرحلة لتتبع رحلة النيتروجين في الطبيعة</p>
+                </div>
+              </div>
+              <button id="n2Tour" class="btn-ghost text-sm font-black px-4 py-2 rounded-xl bg-white/60 dark:bg-white/5" data-i18n="n2_tour">▶ جولة تلقائية</button>
+            </div>
+
+            <!-- أزرار المراحل -->
+            <div id="n2Stages" class="flex flex-wrap gap-2 mt-5"></div>
+
+            <!-- المخطط -->
+            <div class="mt-4 rounded-2xl bg-gradient-to-b from-sky-50 to-emerald-50/60 dark:from-white/5 dark:to-white/[.02] border border-black/5 dark:border-white/10 overflow-x-auto">
+              <svg id="n2Svg" viewBox="0 0 900 470" class="w-full min-w-[640px]" font-family="Cairo, sans-serif">
+                <defs>
+                  <marker id="arrowMint" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#20C997" />
+                  </marker>
+                </defs>
+
+                <!-- الأسهم (الحواف) -->
+                <path id="e_fix1" class="edge" marker-end="url(#arrowMint)" d="M 402 88 C 320 105, 265 112, 212 138" />
+                <path id="e_fix2" class="edge" marker-end="url(#arrowMint)" d="M 215 168 C 360 175, 500 175, 592 168" />
+                <path id="e_light" class="edge" marker-end="url(#arrowMint)" d="M 430 95 L 380 185 L 425 265 L 205 320" />
+                <path id="e_assim" class="edge" marker-end="url(#arrowMint)" d="M 195 310 C 320 240, 480 200, 600 180" />
+                <path id="e_nit1" class="edge" marker-end="url(#arrowMint)" d="M 405 350 L 345 350" />
+                <path id="e_nit2" class="edge" marker-end="url(#arrowMint)" d="M 268 350 L 205 350" />
+                <path id="e_ammo" class="edge" marker-end="url(#arrowMint)" d="M 655 350 L 505 350" />
+                <path id="e_decay" class="edge" marker-end="url(#arrowMint)" d="M 668 205 C 690 240, 700 280, 703 312" />
+                <path id="e_deni1" class="edge" marker-end="url(#arrowMint)" d="M 135 322 C 100 260, 92 195, 98 155" />
+                <path id="e_deni2" class="edge" marker-end="url(#arrowMint)" d="M 140 112 C 250 62, 330 55, 388 58" />
+
+                <!-- تسميات الحواف -->
+                <text class="edge-label" x="285" y="115">تثبيت</text>
+                <text class="edge-label" x="395" y="165">نقل للنبات</text>
+                <text class="edge-label" x="410" y="190">تثبيت بالبرق</text>
+                <text class="edge-label" x="330" y="232">امتصاص</text>
+                <text class="edge-label" x="362" y="342">نترتة 1</text>
+                <text class="edge-label" x="222" y="342">نترتة 2</text>
+                <text class="edge-label" x="560" y="342">أموننة</text>
+                <text class="edge-label" x="718" y="262">مخلفات</text>
+                <text class="edge-label" x="82" y="242">اختزال</text>
+                <text class="edge-label" x="240" y="72">عودة للجو</text>
+
+                <!-- العقد -->
+                <g class="cnode" data-node="atm">
+                  <circle cx="450" cy="62" r="46" fill="#38bdf8" opacity=".92" />
+                  <text x="450" y="58" text-anchor="middle" font-size="15" fill="#fff">الغلاف الجوي</text>
+                  <text x="450" y="76" text-anchor="middle" font-size="13" fill="#fff">N₂ 78%</text>
+                </g>
+                <g class="cnode" data-node="fix">
+                  <circle cx="170" cy="152" r="42" fill="#8B5CF6" opacity=".92" />
+                  <text x="170" y="148" text-anchor="middle" font-size="12.5" fill="#fff">بكتيريا العقد</text>
+                  <text x="170" y="164" text-anchor="middle" font-size="11" fill="#fff">الجذرية</text>
+                </g>
+                <g class="cnode" data-node="plant">
+                  <circle cx="640" cy="165" r="44" fill="#22c55e" opacity=".92" />
+                  <text x="640" y="162" text-anchor="middle" font-size="14" fill="#fff">النبات</text>
+                  <text x="640" y="178" text-anchor="middle" font-size="11" fill="#fff">بروتين وبذور</text>
+                </g>
+                <g class="cnode" data-node="residue">
+                  <circle cx="703" cy="350" r="40" fill="#b45309" opacity=".92" />
+                  <text x="703" y="346" text-anchor="middle" font-size="12" fill="#fff">المخلفات</text>
+                  <text x="703" y="362" text-anchor="middle" font-size="11" fill="#fff">العضوية</text>
+                </g>
+                <g class="cnode" data-node="ammon">
+                  <circle cx="455" cy="350" r="38" fill="#0ea5e9" opacity=".92" />
+                  <text x="455" y="347" text-anchor="middle" font-size="12" fill="#fff">أمونيوم</text>
+                  <text x="455" y="363" text-anchor="middle" font-size="12" fill="#fff">NH₄⁺</text>
+                </g>
+                <g class="cnode" data-node="nitrite">
+                  <circle cx="306" cy="350" r="34" fill="#f59e0b" opacity=".92" />
+                  <text x="306" y="347" text-anchor="middle" font-size="11" fill="#fff">نتريت</text>
+                  <text x="306" y="363" text-anchor="middle" font-size="12" fill="#fff">NO₂⁻</text>
+                </g>
+                <g class="cnode" data-node="nitrate">
+                  <circle cx="160" cy="350" r="36" fill="#10b981" opacity=".92" />
+                  <text x="160" y="347" text-anchor="middle" font-size="11" fill="#fff">نترات</text>
+                  <text x="160" y="363" text-anchor="middle" font-size="12" fill="#fff">NO₃⁻</text>
+                </g>
+                <g class="cnode" data-node="deni">
+                  <circle cx="118" cy="132" r="34" fill="#ef4444" opacity=".85" />
+                  <text x="118" y="128" text-anchor="middle" font-size="11" fill="#fff">بكتيريا</text>
+                  <text x="118" y="143" text-anchor="middle" font-size="10.5" fill="#fff">الاختزال</text>
+                </g>
+                <!-- رمز البرق -->
+                <text x="432" y="150" font-size="22">⚡</text>
+              </svg>
+            </div>
+
+            <!-- لوحة وصف المرحلة -->
+            <div id="n2Info" class="mt-4 rounded-2xl border border-cyan-400/25 bg-cyan-500/5 p-4"></div>
+          </div>
+        </div>
+
+        <!-- ===== الأداة 3: التشخيص الذكي لأمراض النبات ===== -->
+        <div id="diagnostic" class="mt-6 glass rounded-3xl p-6 md:p-8 scroll-mt-28 reveal">
+          <div class="grid lg:grid-cols-2 gap-8">
+            <!-- العمود الأول: الرفع -->
+            <div>
+              <div class="flex items-center gap-3 mb-4">
+                <span class="w-12 h-12 rounded-2xl bg-red-500/15 text-red-500 grid place-items-center text-xl shrink-0"><i class="fa-solid fa-microscope"></i></span>
+                <div>
+                  <h3 class="font-black text-lg" data-i18n="diag_t">التشخيص الذكي لأمراض النبات</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 font-bold" data-i18n="diag_d">ارفع صورة واضحة للورقة المصابة وسيحلّل النموذج الأعراض ويقترح خطة علاج</p>
+                </div>
+              </div>
+
+              <div id="dropZone" class="dropzone rounded-3xl p-8 text-center bg-white/50 dark:bg-white/5">
+                <input type="file" id="fileInput" accept="image/*" class="hidden" />
+                <div id="dzEmpty">
+                  <span class="mx-auto w-16 h-16 rounded-2xl bg-mint/15 text-mint grid place-items-center text-2xl mb-3"><i class="fa-solid fa-cloud-arrow-up"></i></span>
+                  <p class="font-black" data-i18n="dz_t">اسحب صورة الورقة وأفلتها هنا</p>
+                  <p class="text-sm text-slate-400 font-bold mt-1" data-i18n="dz_s">— أو —</p>
+                  <div class="mt-3 flex flex-wrap justify-center gap-2">
+                    <button id="browseBtn" class="btn-primary text-white text-sm font-black px-5 py-2.5 rounded-xl"><i class="fa-solid fa-folder-open"></i> <span data-i18n="dz_browse">اختر صورة</span></button>
+                    <button id="sampleBtn" class="btn-ghost text-sm font-black px-5 py-2.5 rounded-xl bg-white/60 dark:bg-white/5"><i class="fa-solid fa-image"></i> <span data-i18n="dz_sample">استخدم صورة تجريبية</span></button>
+                  </div>
+                </div>
+                <div id="dzPreview" class="hidden">
+                  <img id="previewImg" class="mx-auto max-h-56 rounded-2xl shadow-lg" alt="صورة النبات المُحمّلة" />
+                  <p id="imgName" class="mt-3 text-sm font-bold text-slate-500 dark:text-slate-400"></p>
+                  <div class="mt-3 flex flex-wrap justify-center gap-2">
+                    <button id="analyzeBtn" class="btn-primary text-white font-black px-7 py-3 rounded-2xl"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="dz_analyze">تشخيص بالذكاء الاصطناعي</span></button>
+                    <button id="changeImg" class="btn-ghost font-black px-5 py-3 rounded-2xl bg-white/60 dark:bg-white/5 text-sm"><i class="fa-solid fa-rotate"></i> <span data-i18n="dz_change">تغيير الصورة</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- العمود الثاني: خطوات التحليل والنتيجة -->
+            <div class="space-y-4">
+              <ol id="diagSteps" class="space-y-3">
+                <li class="flex items-center gap-3 opacity-40" data-step="1">
+                  <span class="step-ico w-9 h-9 rounded-full grid place-items-center bg-slate-200 dark:bg-white/10 text-sm shrink-0"><i class="fa-solid fa-image"></i></span>
+                  <span class="font-bold text-sm" data-i18n="ds1">قراءة الصورة وتحسين الجودة</span>
+                  <span class="ms-auto step-check text-mint opacity-0 transition"><i class="fa-solid fa-circle-check"></i></span>
+                </li>
+                <li class="flex items-center gap-3 opacity-40" data-step="2">
+                  <span class="step-ico w-9 h-9 rounded-full grid place-items-center bg-slate-200 dark:bg-white/10 text-sm shrink-0"><i class="fa-solid fa-magnifying-glass-chart"></i></span>
+                  <span class="font-bold text-sm" data-i18n="ds2">استخراج الخصائص (اللون، البقع، الحواف)</span>
+                  <span class="ms-auto step-check text-mint opacity-0 transition"><i class="fa-solid fa-circle-check"></i></span>
+                </li>
+                <li class="flex items-center gap-3 opacity-40" data-step="3">
+                  <span class="step-ico w-9 h-9 rounded-full grid place-items-center bg-slate-200 dark:bg-white/10 text-sm shrink-0"><i class="fa-solid fa-database"></i></span>
+                  <span class="font-bold text-sm" data-i18n="ds3">مقارنة مع قاعدة بيانات الأمراض</span>
+                  <span class="ms-auto step-check text-mint opacity-0 transition"><i class="fa-solid fa-circle-check"></i></span>
+                </li>
+                <li class="flex items-center gap-3 opacity-40" data-step="4">
+                  <span class="step-ico w-9 h-9 rounded-full grid place-items-center bg-slate-200 dark:bg-white/10 text-sm shrink-0"><i class="fa-solid fa-file-medical"></i></span>
+                  <span class="font-bold text-sm" data-i18n="ds4">إعداد التقرير والعلاج المقترح</span>
+                  <span class="ms-auto step-check text-mint opacity-0 transition"><i class="fa-solid fa-circle-check"></i></span>
+                </li>
+              </ol>
+
+              <div class="h-2.5 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
+                <div id="diagBar" class="h-full w-0 bg-gradient-to-r from-mint to-primary transition-all duration-500 bar-shine"></div>
+              </div>
+
+              <div id="diagIdle" class="text-center text-sm text-slate-400 font-bold py-6">
+                <i class="fa-solid fa-robot text-3xl block mb-2 opacity-50"></i>
+                <span data-i18n="diag_idle">بانتظار صورة للتحليل…</span>
+              </div>
+
+              <div id="diagResult" class="hidden"></div>
+
+              <p class="text-[11px] text-slate-400 font-bold flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-info"></i><span data-i18n="diag_disc">نتائج تجريبية لأغراض العرض والتعليم — للقرار الميداني استشر مهندسًا زراعيًا.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ساحة الاختبارات ==================== -->
+    <section id="quiz" class="py-16 md:py-24 scroll-mt-24 relative overflow-hidden">
+      <div class="absolute top-10 -end-32 w-96 h-96 bg-gold/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="max-w-3xl mx-auto px-4 relative">
+        <div class="text-center mb-10 reveal">
+          <span class="kicker"><i class="fa-solid fa-gamepad"></i><span data-i18n="quiz_kicker">التعلّم الممتع</span></span>
+          <h2 class="mt-4 text-3xl md:text-5xl font-black" data-i18n="quiz_title">ساحة الاختبارات</h2>
+          <p class="mt-4 text-slate-600 dark:text-slate-300 leading-relaxed" data-i18n="quiz_sub">أسئلة سريعة بصوت ومؤقت ونقاط XP — تعلّم عبر اللعب وارفع مستواك الأكاديمي.</p>
+        </div>
+
+        <div class="glass rounded-[2rem] p-6 md:p-10 shadow-xl reveal">
+          <!-- شاشة الإعداد -->
+          <div id="quizSetup">
+            <h3 class="font-black mb-2 flex items-center gap-2"><i class="fa-solid fa-layer-group text-mint"></i><span data-i18n="q_cat">اختر التخصص</span></h3>
+            <div id="quizCats" class="flex flex-wrap gap-2">
+              <button class="chip active" data-cat="all" data-i18n="q_all">شامل</button>
+              <button class="chip" data-cat="soil" style="--tc:#8B5CF6" data-i18n="f_soil">علم التربة</button>
+              <button class="chip" data-cat="genetics" style="--tc:#EC4899" data-i18n="f_genetics">وراثة المحاصيل</button>
+              <button class="chip" data-cat="pathology" style="--tc:#EF4444" data-i18n="f_pathology">أمراض النبات</button>
+              <button class="chip" data-cat="animal" style="--tc:#F59E0B" data-i18n="f_animal">الإنتاج الحيواني</button>
+              <button class="chip" data-cat="irrigation" style="--tc:#06B6D4" data-i18n="f_irrigation">هندسة الري</button>
+            </div>
+
+            <h3 class="font-black mt-6 mb-2 flex items-center gap-2"><i class="fa-solid fa-list-ol text-mint"></i><span data-i18n="q_count">عدد الأسئلة</span></h3>
+            <div id="quizCounts" class="flex flex-wrap gap-2">
+              <button class="chip" data-count="5">5</button>
+              <button class="chip active" data-count="10">10</button>
+              <button class="chip" data-count="15">15</button>
+            </div>
+
+            <p id="quizBest" class="mt-5 text-sm font-bold text-slate-500 dark:text-slate-400"></p>
+
+            <button id="quizStartBtn" class="btn-primary w-full text-white font-black text-lg py-4 rounded-2xl mt-5">
+              <i class="fa-solid fa-bolt text-gold"></i> <span data-i18n="q_start">ابدأ التحدي</span>
+            </button>
+          </div>
+
+          <!-- شاشة اللعب -->
+          <div id="quizPlay" class="hidden">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <span id="quizTimer" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-white/10 font-black text-sm"><i class="fa-solid fa-stopwatch text-mint"></i><span id="quizTimerVal">20 ثانية</span></span>
+              <span id="quizProg" class="font-black text-sm text-slate-500 dark:text-slate-400"></span>
+              <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gold/15 text-gold font-black text-sm"><i class="fa-solid fa-bolt"></i><span id="quizLivePts">0</span> XP</span>
+            </div>
+            <div class="h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden mt-4">
+              <div id="quizBar" class="h-full w-0 bg-gradient-to-r from-mint to-primary transition-all duration-500 bar-shine"></div>
+            </div>
+
+            <span id="quizCat" class="inline-block mt-6 px-3 py-1 rounded-full bg-mint/15 text-mint text-xs font-black"></span>
+            <h3 id="quizQ" class="mt-3 text-xl md:text-2xl font-black leading-relaxed"></h3>
+
+            <div id="quizOpts" class="grid gap-3 mt-6"></div>
+
+            <div id="quizExp" class="hidden mt-5 rounded-2xl border p-4 bg-white/60 dark:bg-white/5 border-black/10 dark:border-white/10"></div>
+
+            <button id="quizNext" class="hidden btn-primary w-full text-white font-black py-3.5 rounded-2xl mt-5"></button>
+          </div>
+
+          <!-- شاشة النتيجة -->
+          <div id="quizResult" class="hidden text-center">
+            <svg width="130" height="130" viewBox="0 0 120 120" class="mx-auto">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(148,163,184,.25)" stroke-width="11" />
+              <circle id="resArc" cx="60" cy="60" r="52" fill="none" stroke="#20C997" stroke-width="11" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1s ease" />
+              <text id="resPct" x="60" y="68" text-anchor="middle" font-size="24" font-weight="800" fill="currentColor">0%</text>
+            </svg>
+            <h3 id="resTitle" class="text-2xl font-black mt-2"></h3>
+            <p id="resSub" class="text-sm font-bold text-slate-500 dark:text-slate-400 mt-1"></p>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+              <div class="rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-3"><p class="text-2xl font-black text-emerald-500" id="resCorrect">0</p><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1" data-i18n="res_correct">صحيحة</p></div>
+              <div class="rounded-2xl bg-red-500/10 border border-red-500/20 p-3"><p class="text-2xl font-black text-red-500" id="resWrong">0</p><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1" data-i18n="res_wrong">خاطئة</p></div>
+              <div class="rounded-2xl bg-gold/10 border border-gold/20 p-3"><p class="text-2xl font-black text-gold" id="resXp">+0</p><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1" data-i18n="res_xp">نقاط XP</p></div>
+              <div class="rounded-2xl bg-sky-500/10 border border-sky-500/20 p-3"><p class="text-2xl font-black text-sky-500" id="resTime">0</p><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1" data-i18n="res_time">زمن الحل (ث)</p></div>
+            </div>
+
+            <div id="reviewBlock" class="mt-7 text-start">
+              <h4 class="font-black mb-3 flex items-center gap-2"><i class="fa-solid fa-rotate-left text-mint"></i><span data-i18n="q_review">مراجعة الأخطاء</span></h4>
+              <div id="reviewList" class="space-y-3"></div>
+              <p id="noWrong" class="hidden text-center font-black text-emerald-500 py-3"></p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-3 mt-7">
+              <button id="retryBtn" class="btn-primary text-white font-black px-7 py-3 rounded-2xl"><i class="fa-solid fa-rotate-right"></i> <span data-i18n="res_retry">إعادة التحدي</span></button>
+              <button id="newQuizBtn" class="btn-ghost font-black px-7 py-3 rounded-2xl bg-white/60 dark:bg-white/5"><i class="fa-solid fa-sliders"></i> <span data-i18n="res_new">تغيير الإعدادات</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== المجتمع ولوحة الشرف ==================== -->
+    <section id="community" class="py-16 md:py-24 scroll-mt-24 relative">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center max-w-2xl mx-auto mb-12 reveal">
+          <span class="kicker"><i class="fa-solid fa-people-group"></i><span data-i18n="com_kicker">مجتمع الأرض</span></span>
+          <h2 class="mt-4 text-3xl md:text-5xl font-black" data-i18n="com_title">المجتمع ولوحة الشرف</h2>
+          <p class="mt-4 text-slate-600 dark:text-slate-300 leading-relaxed" data-i18n="com_sub">شارك خبراتك الميدانية، أشجع نصائح الزملاء، وتسابق على قمة لوحة الشرف الأسبوعية.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6">
+          <!-- لوحة الشرف -->
+          <div class="glass rounded-3xl p-6 h-fit reveal">
+            <h3 class="font-black flex items-center gap-2 mb-4"><span class="w-10 h-10 rounded-2xl bg-gold/15 text-gold grid place-items-center"><i class="fa-solid fa-trophy"></i></span><span data-i18n="lb_t">لوحة الشرف الأسبوعية</span></h3>
+            <ol id="lbList" class="space-y-2"></ol>
+            <p class="mt-4 text-[11px] text-slate-400 font-bold text-center" data-i18n="lb_note">* اجمع XP من الاختبارات ومتابعة الدورات لتتصدّر اللوحة.</p>
+          </div>
+
+          <!-- نصائح المجتمع -->
+          <div class="lg:col-span-2 space-y-5">
+            <div class="glass rounded-3xl p-5 reveal">
+              <h3 class="font-black flex items-center gap-2 mb-3"><span class="w-10 h-10 rounded-2xl bg-mint/15 text-mint grid place-items-center"><i class="fa-solid fa-pen-nib"></i></span><span data-i18n="share_t">شارك نصيحة ميدانية</span></h3>
+              <textarea id="tipText" rows="3" class="w-full rounded-2xl border border-black/10 dark:border-white/15 bg-white/70 dark:bg-white/10 px-4 py-3 text-sm font-bold outline-none focus:border-mint transition resize-none" data-i18n-ph="share_ph" placeholder="اكتب نصيحة مفيدة للمزارعين والطلاب…"></textarea>
+              <div class="flex justify-end mt-3">
+                <button id="postTip" class="btn-primary text-white font-black px-6 py-2.5 rounded-xl text-sm"><i class="fa-solid fa-paper-plane"></i> <span data-i18n="share_btn">انشر النصيحة</span></button>
+              </div>
+            </div>
+            <div id="tipsFeed" class="space-y-4"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== تذييل الموقع ==================== -->
+  <footer class="mt-4 border-t border-black/5 dark:border-white/10 bg-white/60 dark:bg-ink/70 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-10">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <span class="w-11 h-11 rounded-2xl btn-primary grid place-items-center text-white text-lg"><i class="fa-solid fa-seedling"></i></span>
+          <span class="leading-tight">
+            <span class="block font-black text-lg text-primary dark:text-white">AgriLearn</span>
+            <span class="block text-[11px] font-bold text-mint">رفيق الزراعة</span>
+          </span>
+        </div>
+        <p class="mt-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed" data-i18n="foot_about">منصة عربية مفتوحة تجمع التعليم الزراعي الأكاديمي بأدوات الذكاء الاصطناعي العملية — لطلاب كليات الزراعة والمزارعين على حد سواء.</p>
+        <div class="flex gap-2 mt-4">
+          <a href="#" class="icon-btn" aria-label="فيسبوك"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="icon-btn" aria-label="يوتيوب"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" class="icon-btn" aria-label="واتساب"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-black mb-4" data-i18n="foot_links">أقسام المنصة</h4>
+        <ul class="space-y-2 text-sm font-bold text-slate-600 dark:text-slate-300">
+          <li><a href="#courses" class="hover:text-mint transition"><i class="fa-solid fa-angle-left text-mint ms-1"></i> <span data-i18n="nav_courses">الدورات</span></a></li>
+          <li><a href="#labs" class="hover:text-mint transition"><i class="fa-solid fa-angle-left text-mint ms-1"></i> <span data-i18n="nav_labs">المختبرات الذكية</span></a></li>
+          <li><a href="#quiz" class="hover:text-mint transition"><i class="fa-solid fa-angle-left text-mint ms-1"></i> <span data-i18n="nav_quiz">ساحة الاختبارات</span></a></li>
+          <li><a href="#community" class="hover:text-mint transition"><i class="fa-solid fa-angle-left text-mint ms-1"></i> <span data-i18n="nav_community">المجتمع</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-black mb-4" data-i18n="foot_news">النشرة الأسبوعية</h4>
+        <p class="text-sm text-slate-500 dark:text-slate-400 font-bold mb-3" data-i18n="foot_news_d">ملخص أسبوعي بأحدث الدروس والورش ونصائح الموسم.</p>
+        <div class="flex gap-2">
+          <input id="newsEmail" type="email" class="flex-1 rounded-xl border border-black/10 dark:border-white/15 bg-white/70 dark:bg-white/10 px-4 py-2.5 text-sm font-bold outline-none focus:border-mint transition" data-i18n-ph="foot_news_ph" placeholder="بريدك الإلكتروني" />
+          <button id="newsBtn" class="btn-primary text-white font-black px-5 py-2.5 rounded-xl text-sm shrink-0" data-i18n="foot_news_btn">اشترك</button>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-black/5 dark:border-white/10 py-4 text-center text-xs text-slate-400 font-bold">
+      © 2026 AgriLearn — <span data-i18n="foot_rights">جميع الحقوق محفوظة — صُنع بـ 💚 لخدمة المزارع العربي</span>
+    </div>
+  </footer>
+
+  <!-- ==================== ودجت المساعد الذكي رفيق الزراعة ==================== -->
+  <button id="chatLauncher" class="fixed bottom-5 left-5 z-50 w-14 h-14 rounded-full btn-primary text-white text-xl grid place-items-center chat-pulse transition-transform duration-300" aria-label="افتح المساعد الذكي رفيق الزراعة">
+    <i class="fa-solid fa-robot"></i>
+  </button>
+
+  <section id="chatPanel" class="fixed bottom-[84px] left-5 z-50 w-[min(92vw,380px)] h-[540px] max-h-[74vh] glass rounded-3xl shadow-2xl flex flex-col overflow-hidden opacity-0 translate-y-4 pointer-events-none transition-all duration-300" role="dialog" aria-label="رفيق الزراعة — المساعد الذكي">
+    <div class="flex items-center gap-3 p-4 bg-gradient-to-l from-primary to-primary2/80 text-white">
+      <span class="relative w-11 h-11 rounded-full bg-white/20 grid place-items-center text-xl shrink-0">
+        <i class="fa-solid fa-robot"></i>
+        <span class="absolute bottom-0 end-0 w-3 h-3 rounded-full bg-emerald-300 border-2 border-white"></span>
+      </span>
+      <div class="flex-1">
+        <p class="font-black leading-none">رفيق الزراعة</p>
+        <p class="text-[11px] opacity-90 mt-1 font-bold" data-i18n="chat_s">متصل الآن • يرد فورًا</p>
+      </div>
+      <button id="chatClose" class="w-9 h-9 rounded-xl bg-white/15 hover:bg-white/30 transition grid place-items-center" aria-label="إغلاق المحادثة"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="chatMsgs" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+    <div id="chatChips" class="px-3 pb-2 flex gap-2 overflow-x-auto"></div>
+    <div class="p-3 border-t border-black/5 dark:border-white/10 flex items-center gap-2">
+      <input id="chatInput" type="text" class="flex-1 bg-white/70 dark:bg-white/10 border border-black/10 dark:border-white/15 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-mint transition" data-i18n-ph="chat_ph" placeholder="اسأل عن أي شيء في الزراعة…" />
+      <button id="chatSend" class="btn-primary w-11 h-11 rounded-xl text-white grid place-items-center shrink-0" aria-label="إرسال"><i class="fa-solid fa-paper-plane rtl:-scale-x-100"></i></button>
+    </div>
+  </section>
+
+  <!-- زر العودة للأعلى -->
+  <button id="toTop" class="fixed bottom-5 right-5 z-40 w-11 h-11 rounded-full glass border border-mint/40 text-mint grid place-items-center opacity-0 pointer-events-none transition" aria-label="العودة للأعلى">
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
+
+<script>
+/* =====================================================================
+   AgriLearn — طبقة الإعدادات والبيانات (Data Layer)
+   ملاحظة للمطوّر: كل المحتوى (دورات / أسئلة / أمراض / ردود المساعد)
+   موجود في هذا الجزء — عدّله بحرية دون كسر منطق التطبيق.
+   ===================================================================== */
+
+/** إعدادات ربط المساعد الذكي "رفيق الزراعة" بالذكاء الاصطناعي الحقيقي */
+const AI_CONFIG = {
+  provider: 'demo',                                            // 'demo' | 'gemini' | 'n8n'
+  geminiApiKey: 'PASTE_YOUR_GEMINI_API_KEY',                   // ضع مفتاح Gemini هنا لتفعيل الردود الحقيقية
+  n8nWebhookUrl: 'https://YOUR-N8N-HOST/webhook/agrilearn',    // رابط Webhook في n8n (سير عمل خاصة بك)
+  geminiModel: 'gemini-1.5-flash'
+};
+
+/** مفاتيح التخزين المحلي (localStorage) */
+const LS = {
+  theme: 'agri_theme', lang: 'agri_lang', points: 'agri_points',
+  bookmarks: 'agri_bookmarks', progress: 'agri_progress', likes: 'agri_likes',
+  tips: 'agri_tips', history: 'agri_history', sound: 'agri_sound', best: 'agri_best'
+};
+
+/** زمن السؤال الواحد بالثواني */
+const Q_TIME = 20;
+
+/** ============ واجهة الترجمة (عربي / إنجليزي) ============ */
+const I18N = {
+  ar: {
+    nav_home: 'الرئيسية', nav_courses: 'الدورات', nav_labs: 'المختبرات الذكية', nav_diag: 'التشخيص الذكي',
+    nav_quiz: 'ساحة الاختبارات', nav_community: 'المجتمع', nav_ai: 'المساعد الذكي',
+    hero_badge: 'منصة التعليم الزراعي الأولى في المنطقة العربية',
+    hero_t1: 'تمكين أجيال', hero_t2: 'الزراعة الذكية', hero_t3: 'والبحث العلمي',
+    hero_sub: 'منصة تفاعلية واحدة تجمع دورات أكاديمية متخصصة، ومختبرات ذكية للحساب والتشخيص، ومجتمعًا من الطلاب والمزارعين — لأن العلم يبدأ من الأرض.',
+    hero_cta1: 'ابدأ رحلة التعلم', hero_cta2: 'استكشف المختبرات', hero_trust: 'انضم إلى أكثر من 12 ألف طالب ومزارع',
+    stat1: 'طالب نشط', stat2: 'دورة متخصصة', stat3: 'ساعة تدريب', stat4: 'نسبة الرضا', ticker_label: 'آخر الأخبار',
+    dash_hi: 'مرحبًا، يا مزارع! 👋', dash_sub: 'لديك درسان واختبار اليوم', dash_week: 'هذا الأسبوع',
+    dash_t1: 'درس: بنية التربة', dash_t2: 'حل 10 أسئلة (7/10)', dash_t3: 'مشاهدة محاضرة الري',
+    dash_new: 'درس جديد متاح 🎬', dash_ach: 'إنجاز جديد', wx_t: '28°C — غائم جزئيًا', wx_s: 'الظروف مثالية لري المساء 💧',
+    courses_kicker: 'المركز الأكاديمي', courses_title: 'الدورات والمساقات',
+    courses_sub: 'محتوى علمي منسّق من نخبة أساتذة كليات الزراعة — تابع تقدمك، حمّل الملخصات، واختبر نفسك بعد كل وحدة.',
+    f_all: 'الكل', f_soil: 'علم التربة والميكروبيولوجيا', f_genetics: 'وراثة المحاصيل', f_pathology: 'أمراض النبات',
+    f_animal: 'الإنتاج الحيواني', f_irrigation: 'هندسة الري',
+    lessons: 'درسًا', hours: 'ساعة', cont: 'متابعة الدورة', start: 'ابدأ الآن', take_quiz: 'اختبار سريع', dl: 'ملخص الدورة',
+    prog_lbl: 'التقدم', lvl1: 'مبتدئ', lvl2: 'متوسط', lvl3: 'متقدم',
+    labs_kicker: 'المختبرات الذكية', labs_title: 'أدوات الزراعة الدقيقة بين يديك',
+    labs_sub: 'ثلاث أدوات عملية تحوّل النظرية إلى قرار ميداني: احسب خطة التسميد، افهم دورة النيتروجين، وشخّص أمراض النبات.',
+    npk_t: 'حاسبة التسميد N-P-K', npk_d: 'بيانات تربتك ← خطة تسميد تقديرية',
+    npk_crop: 'نوع المحصول', npk_area: 'مساحة الأرض (فدان)', npk_n: 'النيتروجين المتاح N (ppm)',
+    npk_p: 'الفوسفور المتاح P (ppm)', npk_k: 'البوتاسيوم المتاح K (ppm)', npk_btn: 'احسب خطة التسميد',
+    npk_need: 'احتياج العنصر', npk_total: 'الإجمالي لمساحتك', npk_kg_unit: 'كجم',
+    npk_hint: '* نتائج تقديرية لأغراض التعليم — اعتمد تحليل مخبر معتمد للقرار النهائي.',
+    fert_urea: 'يوريا 46%', fert_ssp: 'سوبر فوسفات 15.5%', fert_kso4: 'كبريتات بوتاسيوم 50%',
+    crops: { wheat: 'قمح', corn: 'ذرة (جرع)', tomato: 'طماطم', potato: 'بطاطس', rice: 'أرز', citrus: 'موالح' },
+    n2_t: 'دورة النيتروجين التفاعلية', n2_d: 'اضغط على أي مرحلة لتتبع رحلة النيتروجين في الطبيعة',
+    n2_tour: '▶ جولة تلقائية', n2_pause: '⏸ إيقاف الجولة', n2_tip_lbl: 'لماذا يهمّك كمزارع؟',
+    diag_t: 'التشخيص الذكي لأمراض النبات', diag_d: 'ارفع صورة واضحة للورقة المصابة وسيحلّل النموذج الأعراض ويقترح خطة علاج',
+    dz_t: 'اسحب صورة الورقة وأفلتها هنا', dz_s: '— أو —', dz_browse: 'اختر صورة', dz_sample: 'استخدم صورة تجريبية',
+    dz_analyze: 'تشخيص بالذكاء الاصطناعي', dz_change: 'تغيير الصورة',
+    ds1: 'قراءة الصورة وتحسين الجودة', ds2: 'استخراج الخصائص (اللون، البقع، الحواف)',
+    ds3: 'مقارنة مع قاعدة بيانات الأمراض', ds4: 'إعداد التقرير والعلاج المقترح',
+    diag_idle: 'بانتظار صورة للتحليل…', diag_disc: 'نتائج تجريبية لأغراض العرض والتعليم — للقرار الميداني استشر مهندسًا زراعيًا.',
+    r_disease: 'التشخيص', r_conf: 'درجة الثقة', r_sev: 'الخطورة', r_treat: 'خطة العلاج', r_prev: 'الوقاية',
+    r_save: 'حفظ التقرير', r_again: 'تشخيص حالة أخرى', sev_l: 'منخفضة', sev_m: 'متوسطة', sev_h: 'مرتفعة',
+    quiz_kicker: 'التعلّم الممتع', quiz_title: 'ساحة الاختبارات', quiz_sub: 'أسئلة سريعة بصوت ومؤقت ونقاط XP — تعلّم عبر اللعب وارفع مستواك الأكاديمي.',
+    q_cat: 'اختر التخصص', q_count: 'عدد الأسئلة', q_best: 'أفضل نتيجة', q_all: 'شامل', q_start: 'ابدأ التحدي',
+    q_time: 'ثانية', q_next: 'السؤال التالي', q_finish: 'عرض النتيجة', q_exp: 'التفسير العلمي',
+    q_correct: 'إجابة صحيحة! 🎉', q_wrong: 'إجابة غير صحيحة', q_timeout: 'انتهى الوقت! ⏰',
+    q_true: 'صح ✓', q_false: 'خطأ ✗', q_yours: 'إجابتك', q_right: 'الصحيحة',
+    q_review: 'مراجعة الأخطاء', q_noWrong: 'ممتاز! لم تخطئ في أي سؤال 🎉',
+    res_g1: 'أداء أسطوري! 🏆', res_g2: 'أداء جيد جدًا! 🌟', res_g3: 'بداية طيبة، واصل! 💪', res_g4: 'تحتاج مراجعة الدروس 📚',
+    res_correct: 'صحيحة', res_wrong: 'خاطئة', res_xp: 'نقاط XP', res_time: 'زمن الحل (ث)',
+    res_retry: 'إعادة التحدي', res_new: 'تغيير الإعدادات', res_sub_p: 'أجبت عن {c} من {t} في اختبار {s}',
+    com_kicker: 'مجتمع الأرض', com_title: 'المجتمع ولوحة الشرف',
+    com_sub: 'شارك خبراتك الميدانية، أشجع نصائح الزملاء، وتسابق على قمة لوحة الشرف الأسبوعية.',
+    lb_t: 'لوحة الشرف الأسبوعية', lb_you: 'أنت', lb_note: '* اجمع XP من الاختبارات ومتابعة الدورات لتتصدّر اللوحة.',
+    share_t: 'شارك نصيحة ميدانية', share_ph: 'اكتب نصيحة مفيدة للمزارعين والطلاب…', share_btn: 'انشر النصيحة', now_lbl: 'الآن',
+    chat_s: 'متصل الآن • يرد فورًا', chat_ph: 'اسأل عن أي شيء في الزراعة…', chat_send: 'إرسال',
+    chat_greet: 'أهلًا بك! 👋 أنا <b>رفيق الزراعة</b>، مساعدك الذكي. اسألني عن التسميد، الري، أمراض النبات، أو اختر سؤالًا جاهزًا بالأسفل 🌱',
+    sug1: 'كيف أزيد إنتاج القمح؟', sug2: 'ما أعراض نقص النيتروجين؟', sug3: 'ما أفضل نظام للري؟', sug4: 'ما الـ pH المناسب للتربة؟',
+    foot_about: 'منصة عربية مفتوحة تجمع التعليم الزراعي الأكاديمي بأدوات الذكاء الاصطناعي العملية — لطلاب كليات الزراعة والمزارعين على حد سواء.',
+    foot_links: 'أقسام المنصة', foot_news: 'النشرة الأسبوعية', foot_news_d: 'ملخص أسبوعي بأحدث الدروس والورش ونصائح الموسم.',
+    foot_news_ph: 'بريدك الإلكتروني', foot_news_btn: 'اشترك', foot_rights: 'جميع الحقوق محفوظة — صُنع بـ 💚 لخدمة المزارع العربي',
+    toast_like: 'شكرًا لتشجيعك 💚', toast_empty: 'اكتب نصيحة أولًا 🙂', toast_posted: 'نُشرت نصيحتك في المجتمع 🎉',
+    toast_sub: 'تم الاشتراك بالنشرة 📬', toast_book_add: 'أضيفت للقائمة المحفوظة 🔖', toast_book_rm: 'أزيلت من القائمة المحفوظة',
+    toast_pdf: 'تم تنزيل ملخص الدورة 📄', toast_report: 'تم حفظ تقرير التشخيص 📋', toast_reset: 'تمت إعادة تعيين تقدمك ✅',
+    sw_progress: '+15% تقدم في الدورة', sw_complete: 'مبارك! أكملت الدورة وحصلت على +20 XP 🎉',
+    sw_chat_open: 'المساعد الذكي في انتظارك أسفل الصفحة 👇',
+    prof_t: 'ملفي الزراعي', prof_level: 'المستوى', prof_points: 'نقاط الخبرة', prof_quiz: 'اختبارات مكتملة', prof_book: 'دورات محفوظة',
+    prof_reset: 'إعادة تعيين كل التقدم', conf_t: 'هل أنت متأكد؟', conf_d: 'سيُحذف كل تقدمك ونقاطك من هذا المتصفح نهائيًا.',
+    conf_y: 'نعم، أعِد التعيين', conf_n: 'إلغاء', ok_btn: 'حسنًا',
+    v_t: 'مشغّل فيديو الدورة', v_d: 'هذه واجهة تجريبية — ضع معرّف فيديو YouTube الحقيقي في حقل videoId داخل مصفوفة COURSES لتشغيل المحاضرة هنا.',
+    pdf_d: 'ملخص تفاعلي جاهز للطباعة (في الإنتاج: استبدله برابط PDF حقيقي من Supabase Storage).'
+  },
+  en: {
+    nav_home: 'Home', nav_courses: 'Courses', nav_labs: 'Smart Labs', nav_diag: 'AI Diagnostic',
+    nav_quiz: 'Quiz Arena', nav_community: 'Community', nav_ai: 'AI Tutor',
+    hero_badge: 'The region\u2019s #1 agricultural learning platform',
+    hero_t1: 'Empowering Generations of', hero_t2: 'Smart Agriculture', hero_t3: '& Scientific Research',
+    hero_sub: 'One interactive platform combining specialized academic courses, smart calculation & diagnosis labs, and a community of students and farmers — because science starts from the soil.',
+    hero_cta1: 'Start Learning', hero_cta2: 'Explore Smart Labs', hero_trust: 'Join 12,000+ students and farmers',
+    stat1: 'Active students', stat2: 'Specialized courses', stat3: 'Training hours', stat4: 'Satisfaction rate', ticker_label: 'Latest news',
+    dash_hi: 'Hello, farmer! 👋', dash_sub: '2 lessons and a quiz today', dash_week: 'this week',
+    dash_t1: 'Lesson: Soil structure', dash_t2: 'Answer 10 questions (7/10)', dash_t3: 'Watch irrigation lecture',
+    dash_new: 'New lesson available 🎬', dash_ach: 'New achievement', wx_t: '28°C — Partly cloudy', wx_s: 'Perfect conditions for evening irrigation 💧',
+    courses_kicker: 'Academic Center', courses_title: 'Courses & Modules',
+    courses_sub: 'Scientific content curated by top agriculture faculty — track progress, download summaries, and test yourself after each unit.',
+    f_all: 'All', f_soil: 'Soil & Microbiology', f_genetics: 'Crop Genetics', f_pathology: 'Plant Pathology',
+    f_animal: 'Animal Production', f_irrigation: 'Irrigation Engineering',
+    lessons: 'lessons', hours: 'hours', cont: 'Continue course', start: 'Start now', take_quiz: 'Quick quiz', dl: 'Summary',
+    prog_lbl: 'Progress', lvl1: 'Beginner', lvl2: 'Intermediate', lvl3: 'Advanced',
+    labs_kicker: 'Smart Labs', labs_title: 'Precision-agriculture tools in your hands',
+    labs_sub: 'Three practical tools that turn theory into field decisions: calculate fertilization, understand the nitrogen cycle, and diagnose plant diseases.',
+    npk_t: 'N-P-K Fertilizer Calculator', npk_d: 'Your soil data \u2192 an estimated fertilization plan',
+    npk_crop: 'Crop type', npk_area: 'Land area (feddan)', npk_n: 'Available Nitrogen N (ppm)',
+    npk_p: 'Available Phosphorus P (ppm)', npk_k: 'Available Potassium K (ppm)', npk_btn: 'Calculate fertilization plan',
+    npk_need: 'Nutrient need', npk_total: 'Total for your area', npk_kg_unit: 'kg',
+    npk_hint: '* Estimated results for educational purposes \u2014 rely on a certified lab analysis for final decisions.',
+    fert_urea: 'Urea 46%', fert_ssp: 'Superphosphate 15.5%', fert_kso4: 'Potassium sulfate 50%',
+    crops: { wheat: 'Wheat', corn: 'Corn (Maize)', tomato: 'Tomato', potato: 'Potato', rice: 'Rice', citrus: 'Citrus' },
+    n2_t: 'Interactive Nitrogen Cycle', n2_d: 'Tap any stage to follow nitrogen\u2019s journey in nature',
+    n2_tour: '\u25B6 Auto tour', n2_pause: '\u23F8 Stop tour', n2_tip_lbl: 'Why it matters to you?',
+    diag_t: 'AI Plant Disease Diagnosis', diag_d: 'Upload a clear photo of the affected leaf and the model will analyze symptoms and suggest treatment',
+    dz_t: 'Drag & drop a leaf photo here', dz_s: '\u2014 or \u2014', dz_browse: 'Choose image', dz_sample: 'Use a demo image',
+    dz_analyze: 'Diagnose with AI', dz_change: 'Change image',
+    ds1: 'Reading image & enhancing quality', ds2: 'Extracting features (color, spots, edges)',
+    ds3: 'Comparing with disease database', ds4: 'Preparing report & suggested treatment',
+    diag_idle: 'Waiting for an image to analyze\u2026', diag_disc: 'Demo results for educational purposes — for real field decisions consult an agronomist.',
+    r_disease: 'Diagnosis', r_conf: 'Confidence', r_sev: 'Severity', r_treat: 'Treatment plan', r_prev: 'Prevention',
+    r_save: 'Save report', r_again: 'Diagnose another case', sev_l: 'Low', sev_m: 'Medium', sev_h: 'High',
+    quiz_kicker: 'Fun learning', quiz_title: 'Quiz Arena', quiz_sub: 'Quick questions with sound, timer and XP points — learn through play.',
+    q_cat: 'Choose specialty', q_count: 'Number of questions', q_best: 'Best score', q_all: 'Mixed', q_start: 'Start challenge',
+    q_time: 'sec', q_next: 'Next question', q_finish: 'Show result', q_exp: 'Scientific explanation',
+    q_correct: 'Correct answer! \uD83C\uDF89', q_wrong: 'Incorrect answer', q_timeout: 'Time is up! \u23F0',
+    q_true: 'True \u2713', q_false: 'False \u2717', q_yours: 'Your answer', q_right: 'Correct',
+    q_review: 'Review mistakes', q_noWrong: 'Excellent! You made no mistakes \uD83C\uDF89',
+    res_g1: 'Legendary performance! \uD83C\uDFC6', res_g2: 'Very good! \uD83C\uDF1F', res_g3: 'Good start, keep going! \uD83D\uDCAA', res_g4: 'Review the lessons \uD83D\uDCDA',
+    res_correct: 'Correct', res_wrong: 'Wrong', res_xp: 'XP earned', res_time: 'Time (sec)',
+    res_retry: 'Retry challenge', res_new: 'Change settings', res_sub_p: 'You answered {c} of {t} in the {s} quiz',
+    com_kicker: 'Field community', com_title: 'Community & Leaderboard',
+    com_sub: 'Share your field experience, cheer for peers\u2019 tips, and race to the top of the weekly leaderboard.',
+    lb_t: 'Weekly Leaderboard', lb_you: 'You', lb_note: '* Earn XP from quizzes and course progress to top the board.',
+    share_t: 'Share a field tip', share_ph: 'Write a useful tip for farmers and students\u2026', share_btn: 'Post tip', now_lbl: 'now',
+    chat_s: 'Online \u2022 replies instantly', chat_ph: 'Ask me anything about farming\u2026', chat_send: 'Send',
+    chat_greet: 'Welcome! \uD83D\uDC4B I am <b>AgriMate</b>, your AI assistant. Ask me about fertilization, irrigation, plant diseases, or pick a ready question below \uD83C\uDF31',
+    sug1: 'How to increase wheat yield?', sug2: 'Nitrogen deficiency symptoms?', sug3: 'Best irrigation system?', sug4: 'Ideal soil pH?',
+    foot_about: 'An open Arabic platform combining academic agricultural education with practical AI tools \u2014 for agriculture students and farmers alike.',
+    foot_links: 'Platform sections', foot_news: 'Weekly newsletter', foot_news_d: 'A weekly digest of new lessons, workshops and seasonal tips.',
+    foot_news_ph: 'Your email', foot_news_btn: 'Subscribe', foot_rights: 'All rights reserved \u2014 made with \uD83D\uDC9A for Arab farmers',
+    toast_like: 'Thanks for the support \uD83D\uDC9A', toast_empty: 'Write a tip first \u263A', toast_posted: 'Your tip was posted \uD83C\uDF89',
+    toast_sub: 'Subscribed to the newsletter \uD83D\uDCEC', toast_book_add: 'Added to bookmarks \uD83D\uDD16', toast_book_rm: 'Removed from bookmarks',
+    toast_pdf: 'Course summary downloaded \uD83D\uDCC4', toast_report: 'Diagnosis report saved \uD83D\uDCCB', toast_reset: 'Progress reset \u2705',
+    sw_progress: '+15% course progress', sw_complete: 'Congrats! Course completed \u2014 +20 XP \uD83C\uDF89',
+    sw_chat_open: 'Your AI tutor is waiting at the bottom \uD83D\uDC47',
+    prof_t: 'My Agri Profile', prof_level: 'Level', prof_points: 'XP points', prof_quiz: 'Quizzes taken', prof_book: 'Bookmarked courses',
+    prof_reset: 'Reset all progress', conf_t: 'Are you sure?', conf_d: 'All your progress and points will be permanently erased from this browser.',
+    conf_y: 'Yes, reset', conf_n: 'Cancel', ok_btn: 'Got it',
+    v_t: 'Course video player', v_d: 'This is a demo player \u2014 put a real YouTube video id in the videoId field inside the COURSES array to play the lecture here.',
+    pdf_d: 'An interactive print-ready summary (in production: replace with a real PDF URL from Supabase Storage).'
+  }
+};
+
+/** ============ الأقسام الخمسة (لون + أيقونة + محاور الدورة) ============ */
+const DEPTS = {
+  soil: {
+    ar: 'علم التربة والميكروبيولوجيا', en: 'Soil & Microbiology', color: '#8B5CF6', icon: 'fa-mound',
+    topics: ['تكوين التربة وأنواعها وتراكيبها', 'الخواص الفيزيائية والكيميائية للتربة', 'المادة العضوية والكائنات الدقيقة', 'دورة العناصر الغذائية في التربة', 'قراءة تحليل التربة وبناء التوصيات']
+  },
+  genetics: {
+    ar: 'وراثة المحاصيل', en: 'Crop Genetics', color: '#EC4899', icon: 'fa-dna',
+    topics: ['الخلية والكروموسومات والجينات', 'قوانين مندل للوراثة', 'الوراثة الكمية وصفات المحصول', 'التهجين والاختيار الوراثي', 'مدخل إلى تقنيات التحرير الجيني CRISPR']
+  },
+  pathology: {
+    ar: 'أمراض النبات', en: 'Plant Pathology', color: '#EF4444', icon: 'fa-virus',
+    topics: ['مسببات الأمراض: فطريات وبكتيريا وفيروسات', 'دورة المرض وعوامل الإصابة', 'التشخيص الحقلي والمعملي', 'الإدارة المتكاملة لأمراض النبات', 'المبيدات: أنواعها واستخدامها الآمن']
+  },
+  animal: {
+    ar: 'الإنتاج الحيواني', en: 'Animal Production', color: '#F59E0B', icon: 'fa-cow',
+    topics: ['تشريح الجهاز الهضمي ووظائفه', 'أسس تغذية الحيوان والاحتياجات', 'إدارة مزارع الدواجن الحديثة', 'صحة القطيع والبرامج الوقائية', 'اقتصاديات الإنتاج الحيواني']
+  },
+  irrigation: {
+    ar: 'هندسة الري', en: 'Irrigation Engineering', color: '#06B6D4', icon: 'fa-droplet',
+    topics: ['مصادر مياه الري وجودتها', 'أنظمة الري السطحي والضغط', 'تصميم شبكات التنقيط والرش', 'جدولة الري وقياس النتح-تبخر ET', 'التحكم الآلي والاستشعار عن بعد']
+  }
+};
+
+/** ============ كتالوج الدورات — انسخ أي كائن وعدّله لإضافة دورة جديدة ============ */
+const COURSES = [
+  { id: 'c1', dept: 'soil', title: 'علم التربة وأسس الخصوبة', en: 'Soil Science & Fertility Basics', inst: 'د. أحمد الشناوي', lessons: 24, hours: 12, lvl: 1, rating: 4.8, videoId: 'PLACEHOLDER',
+    desc: 'رحلة من حجر الأساس: تكوين التربة وخواصها الفيزيائية والكيميائية، وقراءة تحليل التربة كالمحترفين وترجمة الأرقام إلى قرارات تسميد.' },
+  { id: 'c2', dept: 'soil', title: 'الميكروبيولوجيا الزراعية والتثبيت الحيوي', en: 'Agricultural Microbiology & Bio-fixation', inst: 'د. منى سليم', lessons: 18, hours: 9, lvl: 2, rating: 4.7, videoId: 'PLACEHOLDER',
+    desc: 'عالم الكائنات الدقيقة الخفيّة: الرايزوبيوم والميكوريزا والأسمدة الحيوية، وكيف تستثمر ملايين الميكروبات لصالح أرضك مجانًا.' },
+  { id: 'c3', dept: 'genetics', title: 'أساسيات وراثة المحاصيل', en: 'Crop Genetics Fundamentals', inst: 'د. هبة فؤاد', lessons: 20, hours: 10, lvl: 1, rating: 4.6, videoId: 'PLACEHOLDER',
+    desc: 'من مندل إلى الحقل: قوانين الوراثة، صفات الكمّية في المحاصيل، وكيف يختار المربّي أفضل الأبناء لجيلٍ أفضل من البذور.' },
+  { id: 'c4', dept: 'genetics', title: 'التحسين الوراثي وتقنيات CRISPR', en: 'Breeding & CRISPR Technologies', inst: 'د. كريم عبد الله', lessons: 16, hours: 8, lvl: 3, rating: 4.9, videoId: 'PLACEHOLDER',
+    desc: 'أحدث أدوات علم الوراثة: علامات الـ DNA، الانتخاب المُساعد، وتحرير الجينات لصناعة أصناف مقاومة للجفاف والحرارة.' },
+  { id: 'c5', dept: 'pathology', title: 'أمراض النبات التشخيصية', en: 'Diagnostic Plant Pathology', inst: 'د. طارق منصور', lessons: 22, hours: 11, lvl: 2, rating: 4.8, videoId: 'PLACEHOLDER',
+    desc: 'تعلّم لغة الأعراض: كيف تقرأ البقع والاصفرار والذبول، وتميز بين الفطريات والبكتيريا والفيروسات قبل أن تفقد المحصول.' },
+  { id: 'c6', dept: 'pathology', title: 'المبيدات الحيوية والإدارة المتكاملة', en: 'Biopesticides & IPM', inst: 'د. رانيا عثمان', lessons: 14, hours: 7, lvl: 2, rating: 4.5, videoId: 'PLACEHOLDER',
+    desc: 'بدائل آمنة للمبيدات الكيميائية: الأعداء الحيوية، المبيدات النباتية، وبناء برنامج إدارة متكاملة يحمي محصولك وبيئتك.' },
+  { id: 'c7', dept: 'animal', title: 'إنتاج الدواجن الحديث', en: 'Modern Poultry Production', inst: 'د. سائد مرسي', lessons: 26, hours: 13, lvl: 1, rating: 4.7, videoId: 'PLACEHOLDER',
+    desc: 'من البيضة إلى السوق: إدارة العنابر، برامج التغذية والإضاءة، واقتصاديات مشاريع الدواجن الصغيرة والمتوسطة.' },
+  { id: 'c8', dept: 'animal', title: 'تغذية المجترات وكفاءة التحويل', en: 'Ruminant Nutrition & Efficiency', inst: 'د. عمرو زيدان', lessons: 15, hours: 8, lvl: 3, rating: 4.6, videoId: 'PLACEHOLDER',
+    desc: 'اعقل عملة في مزرعة الألبان: تركيب العلائق، بروتين العبور، وكيف ترفع كفاءة تحويل العلف وتقلل تكلفة اللتر الواحد.' },
+  { id: 'c9', dept: 'irrigation', title: 'الهندسة الهيدروليكية وأنظمة الري', en: 'Hydraulics & Irrigation Systems', inst: 'د. وليد شلبي', lessons: 21, hours: 11, lvl: 2, rating: 4.8, videoId: 'PLACEHOLDER',
+    desc: 'أساسيات جريان الماء، حساب الفواقد، وتصميم شبكات التنقيط والرش خطوة بخطوة من الخريطة إلى الصمام.' },
+  { id: 'c10', dept: 'irrigation', title: 'الزراعة الدقيقة والاستشعار عن بعد', en: 'Precision Agriculture & Remote Sensing', inst: 'د. دينا صابر', lessons: 19, hours: 10, lvl: 3, rating: 4.9, videoId: 'PLACEHOLDER',
+    desc: 'مستقبل الحقل الرقمي: صور الأقمار الصناعية والطائرات المسيّرة، مؤشر NDVI، وخرائط الإنتاجية لري وتسميد موقعي.' }
+];
+
+/** ============ بنك الأسئلة — type: 'mcq' (اختياري) أو 'tf' (صح/خطأ) ============ */
+const QUESTIONS = [
+  { cat: 'soil', type: 'mcq', q: 'ما العنصر الغذائي الأكثر أهمية لنمو الأوراق والساق؟', opts: ['النيتروجين', 'الفوسفور', 'البوتاسيوم', 'الكالسيوم'], correct: 0, exp: 'النيتروجين (N) هو لبنة الكلوروفيل والبروتينات، ونقصه يسبب اصفرار الأوراق القديمة أولًا.' },
+  { cat: 'soil', type: 'tf', q: 'التربة الرملية تحتفظ بالماء أكثر من التربة الطينية.', correct: 1, exp: 'العكس صحيح؛ الطينية دقيقة الحبيبات ومساماتها صغيرة فتحتفظ بالماء والعناصر أكثر، بينما يتصرف الماء من الرملية بسرعة.' },
+  { cat: 'soil', type: 'mcq', q: 'ما أفضل نطاق pH لمعظم المحاصيل الحقلية؟', opts: ['4 – 5', '6 – 7', '8 – 9', '10 – 11'], correct: 1, exp: 'معظم المحاصيل تمتص العناصر بكفاءة في النطاق المتعادل قليلًا (6 – 7)؛ الانحراف عنه يُقفل العناصر رغم وجودها.' },
+  { cat: 'genetics', type: 'mcq', q: 'ما الوحدة الأساسية للوراثة في الكائنات الحية؟', opts: ['الخلية', 'الجين', 'البروتين', 'الإنزيم'], correct: 1, exp: 'الجين مقطع من الـ DNA يحمل شفرة صفة وراثية واحدة، وهو وحدة الوراثة الأساسية.' },
+  { cat: 'genetics', type: 'tf', q: 'نبات القمح أحادي الفلقة (Monocot).', correct: 0, exp: 'صحيح؛ القمح من النباتات الحشيشية أحادية الفلقة، بخلاف البقوليات والقطن ثنائية الفلقة.' },
+  { cat: 'genetics', type: 'mcq', q: 'تُستخدم تقنية CRISPR بشكل أساسي من أجل:', opts: ['التعديل الجيني الدقيق للمواضع المستهدفة', 'زيادة حجم الثمار فقط', 'مقاومة الحرارة فقط', 'تسريع التلقيح'], correct: 0, exp: 'CRISPR تعمل كـ«مقص جيني» موجَّه يعدّل تسلسل DNA في موضع محدد بدقة عالية.' },
+  { cat: 'pathology', type: 'mcq', q: 'البياض الدقيقي يظهر على الأوراق على شكل:', opts: ['بقع بنية غائرة', 'مسحوق أبيض على سطح الورقة', 'اصفرار الحواف فقط', 'تقرحات سوداء بالساق'], correct: 1, exp: 'الفطر المسبب يفرض طبقة مسحوقة بيضاء تشبه الدقيق وتُمسح بالإصبع بسهولة.' },
+  { cat: 'pathology', type: 'tf', q: 'الدورة الزراعية (المناوبة) تقلل انتشار أمراض التربة.', correct: 0, exp: 'صحيح؛ تعطيل مضيف المرض موسمًا كاملًا يكسر دورة حياة المسبب ويخفض التلوث تدريجيًا.' },
+  { cat: 'pathology', type: 'mcq', q: 'مسبب اللفحة المتأخرة في البطاطس ينتمي إلى:', opts: ['الفطريات البيضية (Oomycetes)', 'البكتيريا', 'الفيروسات', 'النيماتودا'], correct: 0, exp: 'Phytophthora infestans فطر بيضي يزدهر في الجو الرطب البارد، وهو نفسه الذي سبب مجاعة أيرلندا.' },
+  { cat: 'animal', type: 'mcq', q: 'أي مما يلي يُعد مصدر بروتين عالي الجودة في علف الدواجن؟', opts: ['كسب الصويا', 'القش', 'الرمل', 'دقيق الذرة'], correct: 0, exp: 'كسب الصويا غني بالأحماض الأمينية المهمة (لايسين وميثيونين) وهو بروتين المرجع في تغذية الدواجن.' },
+  { cat: 'animal', type: 'tf', q: 'المجترات تهضم السيليلوز بفضل الكائنات الدقيقة في الكرش.', correct: 0, exp: 'صحيح؛ البكتيريا والبروتوزوا في الكرش تفرز إنزيمات السيليولاز وتحوّل الألياف لطاقة وبروتين ميكروبي.' },
+  { cat: 'animal', type: 'mcq', q: 'في ذروة الإنتاج تبيض الدجاجة البياضة التجارية تقريبًا:', opts: ['بيضة كل يومين', 'بيضة يوميًا تقريبًا', 'بيضة أسبوعيًا', 'بيضتين يوميًا'], correct: 1, exp: 'دورة إتمام البيضة تستغرق نحو 24 – 26 ساعة، لذا تنتج الدجاجة المحسّنة بيضة يوميًا تقريبًا في الذروة.' },
+  { cat: 'irrigation', type: 'mcq', q: 'كفاءة استخدام المياه أعلى ما تكون في نظام:', opts: ['الري السطحي (غرقان)', 'الرش الثابت', 'الري بالتنقيط', 'الاعتماد على الأمطار'], correct: 2, exp: 'التنقيط يوصل الماء لمنطقة الجذور مباشرة بلا تبخر أو جريان سطحي، بكفاءة تصل 90 – 95٪.' },
+  { cat: 'irrigation', type: 'tf', q: 'الري الليلي يقلل الفقد بالتبخر مقارنة بالري ظهرًا.', correct: 0, exp: 'صحيح؛ انخفاض الحرارة وسرعة الريح ليلًا يقلل البخر، لكن راقب الرطوبة لتفادي الأمراض الفطرية.' },
+  { cat: 'irrigation', type: 'mcq', q: 'قراءة EC في مياه الري تقيس:', opts: ['الملوحة (المواد الذائبة)', 'الحرارة', 'درجة الحموضة pH', 'الأكسجين المذاب'], correct: 0, exp: 'التوصيل الكهربائي EC مؤشر مباشر لتركيز الأملاح الذائبة؛ ارتفاعه يضغط على النبات (إجهاد اسموزي).' }
+];
+
+/** ============ قاعدة بيانات التشخيص التجريبي (مختارة عشوائيًا عند التحليل) ============ */
+const DISEASES = [
+  { name: 'اللفحة المتأخرة (Late Blight)', conf: [85, 96], sev: 'h',
+    treat: ['إزالة النباتات المصابة وحرقها بعيدًا عن الحقل فورًا', 'الرش بمبيد جهازي (ميتالاكسيل + مانع تشبع) وفق جرعة النشرة', 'تقليل الرطوبة بتحسين التهوية وضبط جداول الري'],
+    prev: ['زراعة أصناف معتمدة مقاومة', 'تجنب الري بالرش في المساء', 'دورة زراعية 3 سنوات بعيدًا عن العائلة الباذنجانية'] },
+  { name: 'البياض الدقيقي (Powdery Mildew)', conf: [80, 94], sev: 'm',
+    treat: ['الرش بالكبريت المبلل أو محاليل بيكربونات البوتاسيوم', 'رش زيوت معدنية خفيفة لخنق فطر المسبب', 'إزالة الأوراق شديدة الإصابة والتخلص منها'],
+    prev: ['تهوية جيدة وتقليل كثافة الزراعة', 'تجنب التسميد النيتروجيني الزائد', 'متابعة أسبوعية للورق السفلي'] },
+  { name: 'الصدأ الأصفر (Yellow Rust)', conf: [78, 92], sev: 'm',
+    treat: ['الرش بمبيد جهازي من مجموعة التريازولات عند بلوغ 5٪ إصابة', 'متابعة النشرات الوقائية للريف لتوقيت الرش الأمثل'],
+    prev: ['زراعة أصناف مقاومة معتمدة', 'إزالة نباتات القمح العشوائية خارج الموسم لكسر دورة المرض'] },
+  { name: 'نقص عناصر غذائية (Chlorosis)', conf: [70, 88], sev: 'l',
+    treat: ['تسميد ورقي سريع الامتصاص (مخلب حديد/زنك حسب التحليل)', 'ضبط pH التربة نحو 6.5 لتحرير العناصر', 'إضافة جبس/كبريت زراعي في الترب القلوية'],
+    prev: ['تحليل تربة دوري كل موسم', 'برنامج تسميد متوازن بدل التركيز على عنصر واحد'] },
+  { name: 'نبات سليم ✅ (Healthy)', conf: [90, 98], sev: 'l',
+    treat: ['لا توجد إجراءات علاجية مطلوبة — استمر في المتابعة'],
+    prev: ['حافظ على جدول الري والتسميد المتوازن', 'استمر في الفحص الأسبوعي لاكتشاف أي تغيير مبكرًا'] }
+];
+
+/** ============ أساس حاسبة التسميد: احتياج المحصول (كجم/فدان) + نصيحة ============ */
+const NPK_BASE = {
+  wheat:  { n: 75,  p: 35, k: 15, tip: 'وزّع النيتروجين على دفعتين: 50٪ عند الزراعة و50٪ مع الرية الثانية.' },
+  corn:   { n: 120, p: 40, k: 50, tip: 'أعلى احتياج نيتروجيني — وزّعه على 3 دفعات لتفادي غسل السماد.' },
+  tomato: { n: 100, p: 60, k: 80, tip: 'خفّض النيتروجين بعد عقد الثمار لتجنّب تضخم الخضرة على حساب الإثمار.' },
+  potato: { n: 110, p: 55, k: 90, tip: 'البوتاسيوم يحسّن جودة الدرنات وقابليتها للتخزين — لا تهمله.' },
+  rice:   { n: 80,  p: 40, k: 30, tip: 'أضف النيتروجين على 3 دفعات مع تجفيف الأرض بين الريات لتقليل الفقد.' },
+  citrus: { n: 90,  p: 50, k: 70, tip: 'سماد عضوي مخلّل في الشتاء + نيتروجين في الربيع على دفعات صغيرة.' }
+};
+
+/** ============ مراحل دورة النيتروجين (المخطط التفاعلي) ============ */
+const N2_STAGES = {
+  fix: {
+    btnKey: 'n2_fix', edges: ['e_fix1', 'e_fix2', 'e_light'],
+    title: 'التثبيت النيتروجيني', en: 'Nitrogen Fixation',
+    desc: 'تحويل غاز النيتروجين N₂ الخامل إلى أمونيا صالحة للنبات، عبر بكتيريا مثل الرايزوبيوم في العقد الجذرية للبقوليات، أو بفسفرة البرق في الغلاف الجوي.',
+    descEn: 'Converting inert atmospheric N\u2082 into plant-usable ammonia, via bacteria such as Rhizobium in legume root nodules, or by lightning fixing N\u2082 directly.',
+    eq: 'N₂ → NH₄⁺ / NO₃⁻',
+    tip: 'ازرع بقوليات (برسيم/فول) قبل محصولك الرئيسي لتوفير 30 – 50 كجم نيتروجين طبيعيًا ورفع خصوبة أرضك مجانًا.',
+    tipEn: 'Plant legumes (clover/beans) before your main crop to add 30\u201350 kg of natural nitrogen and boost fertility for free.'
+  },
+  nit: {
+    btnKey: 'n2_nit', edges: ['e_nit1', 'e_nit2'],
+    title: 'النترتة', en: 'Nitrification',
+    desc: 'أكسدة الأمونيوم إلى نتريت ثم نترات بوساطة بكتيريا النتروسوموناس والنيتروباكتر — والنترات هي الصورة التي يمتصها النبات بسهولة.',
+    descEn: 'Oxidation of ammonium into nitrite then nitrate by Nitrosomonas and Nitrobacter bacteria \u2014 nitrate being the form plants absorb most easily.',
+    eq: 'NH₄⁺ → NO₂⁻ → NO₃⁻',
+    tip: 'النترتة عملية هوائية تحتاج تهوية جيدة — لا تغرق تربتك طول الوقت حتى لا تختنق الميكروبات النافعة.',
+    tipEn: 'Nitrification is aerobic \u2014 avoid waterlogging your soil so the beneficial microbes can breathe and work.'
+  },
+  assim: {
+    btnKey: 'n2_assim', edges: ['e_assim'],
+    title: 'الامتصاص والاستيعاب', en: 'Assimilation',
+    desc: 'امتصاص الجذور لأيونات النترات والأمونيوم من محلول التربة، وبناء الأحماض الأمينية والبروتينات النباتية داخل النبات.',
+    descEn: 'Roots absorb nitrate and ammonium ions from the soil solution and build amino acids and plant proteins inside the plant.',
+    eq: 'NO₃⁻ → أحماض أمينية → بروتين',
+    tip: 'وقّت التسميد مع مراحل النمو النشط (التفريع/عقد الثمار) ليرفع الامتصاص ويقلل الفقد في التربة.',
+    tipEn: 'Time fertilization with active growth stages (tillering/fruit set) to maximize uptake and cut soil losses.'
+  },
+  ammo: {
+    btnKey: 'n2_ammo', edges: ['e_ammo', 'e_decay'],
+    title: 'الأموننة (التحلل)', en: 'Ammonification',
+    desc: 'تفكيك الكائنات الدقيقة للمخلفات العضوية وبقايا النبات والحيوان، وإطلاق النيتروجين فيها على شكل أمونيوم يعود لمخزون التربة.',
+    descEn: 'Microbes decompose organic residues and plant/animal remains, releasing their nitrogen back to the soil as ammonium.',
+    eq: 'مادة عضوية → NH₄⁺',
+    tip: 'الكومبوست والسماد البلدي جيد التخمر هو وقود هذه المرحلة — أضفه قبل الحرابة بأسابيع.',
+    tipEn: 'Well-rotted compost and manure fuel this stage \u2014 apply them weeks before plowing.'
+  },
+  deni: {
+    btnKey: 'n2_deni', edges: ['e_deni1', 'e_deni2'],
+    title: 'الاختزال ونزع النيتروجين', en: 'Denitrification',
+    desc: 'في التربة المشبعة بالماء وقليلة التهوية تحوّل بكتيريا الاختزال النترات إلى غازات نيتروجينية ترتفع للغلاف الجوي — وهذا فقدٌ حقيقي للسماد.',
+    descEn: 'In waterlogged, poorly aerated soil, denitrifying bacteria convert nitrate into gaseous nitrogen that escapes to the atmosphere \u2014 a real fertilizer loss.',
+    eq: 'NO₃⁻ → N₂ ↑',
+    tip: 'تجنب الإغراق المائي وطبّق النيتروجين على دفعات صغيرة لتقليل الفقد بالاختزال إلى أدنى حد.',
+    tipEn: 'Avoid waterlogging and split nitrogen into small doses to minimize denitrification losses.'
+  }
+};
+
+/** ============ شريط الأخبار ============ */
+const TICKER = {
+  ar: [
+    '🌱 انطلاق مساق «الزراعة الدقيقة والاستشعار عن بعد» — سجّل الآن',
+    '🏆 تحدي Quiz Arena الأسبوعي بنقاط XP مضاعفة يوم الجمعة',
+    '🔬 ورشة مجانية: أساسيات تحليل التربة المخبرية — الخميس 8 مساءً',
+    '🚜 جديد المختبرات: حاسبة التسميد الذكية أصبحت متاحة للجميع',
+    '📅 ورشة العناية بمزارع الدواجن — آخر موعد للتسجيل نهاية الشهر'
+  ],
+  en: [
+    '🌱 New course: Precision Agriculture & Remote Sensing \u2014 enroll now',
+    '🏆 Weekly Quiz Arena challenge \u2014 double XP every Friday',
+    '🔬 Free workshop: Soil lab analysis basics \u2014 Thursday 8 PM',
+    '🚜 New in Labs: the smart NPK calculator is now live',
+    '📅 Poultry care workshop \u2014 registration closes end of month'
+  ]
+};
+
+/** ============ بيانات المجتمع الأولية ============ */
+const LB_SEED = [
+  ['أحمد محمود', 1240], ['سارة عبد الله', 1120], ['محمد حسن', 980], ['فاطمة علي', 870], ['يوسف إبراهيم', 760]
+];
+
+const SEED_TIPS = [
+  { id: 't1', n: 'سارة رضا', t: 'قبل 3 أيام', x: 'أضيفي كومبوست قبل الحرابة بأسبوعين على الأقل — رفع المادة العضوية في تربتي الرملية من 0.7٪ إلى 1.4٪ في موسم واحد 👌', l: 24 },
+  { id: 't2', n: 'أحمد محمود', t: 'قبل أسبوع', x: 'أفضل وقت لرش المبيدات الحيوية بعد المغرب؛ أشعة الشمس فوق البنفسجية تقتل البكتيريا النافعة قبل أن تؤدي عملها.', l: 18 },
+  { id: 't3', n: 'د. وليد شلبي', t: 'قبل أسبوعين', x: 'راقبوا قراءة EC لمياه الري بجهاز محمول قبل كل ريّة — استطعنا توفير 15٪ من أسمدة الحقن فقط بضبط التركيز.', l: 31 }
+];
+</script>
+
+<script>
+/* =====================================================================
+   AgriLearn — منطق التطبيق (الجزء الأول): أدوات عامة + الثيم + اللغة
+   ===================================================================== */
+
+/* ---------- أدوات مساعدة عامة ---------- */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+/** استرجاع نص مترجم: t('nav_home') أو t('crops.wheat') */
+const t = k => k.split('.').reduce((o, x) => (o && o[x] !== undefined) ? o[x] : undefined, I18N[state.lang]) ?? k;
+
+/* ---------- غلاف التخزين المحلي (سهل استبداله لاحقًا بـ Supabase/Firebase) ---------- */
+const Store = {
+  get(k, d) { try { const v = localStorage.getItem(LS[k] || k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(LS[k] || k, JSON.stringify(v)); } catch (e) { } },
+  del(k) { try { localStorage.removeItem(LS[k] || k); } catch (e) { } }
+};
+
+/** الحالة المركزية للتطبيق — كل قيمها تُحفظ تلقائيًا في localStorage */
+const state = {
+  lang:      Store.get('lang', 'ar'),
+  sound:     Store.get('sound', true),
+  points:    Store.get('points', 120),
+  bookmarks: Store.get('bookmarks', []),
+  progress:  Store.get('progress', { c1: 60, c2: 20, c4: 45, c5: 10, c9: 30 }),
+  likes:     Store.get('likes', []),
+  tips:      Store.get('tips', [])
+};
+
+/* ---------- التنبيهات الصغيرة (SweetAlert2 Toast) ---------- */
+const Toast = Swal.mixin({
+  toast: true, position: 'top', showConfirmButton: false, timer: 2300, timerProgressBar: true
+});
+const notify = (msg, icon = 'success') => Toast.fire({ icon, title: msg });
+
+/* ---------- محرك الأصوات عبر Web Audio API (بدون ملفات صوت) ---------- */
+const Sound = {
+  ctx: null,
+  init() { if (!this.ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) this.ctx = new AC(); } },
+  play(type) {
+    if (!state.sound) return;
+    try {
+      this.init(); if (!this.ctx) return;
+      const t0 = this.ctx.currentTime;
+      const presets = {
+        click:   [[660, 0, .06]],
+        tick:    [[880, 0, .04]],
+        correct: [[523, 0, .12], [784, .12, .2]],
+        wrong:   [[220, 0, .28]],
+        win:     [[523, 0, .15], [659, .15, .15], [784, .3, .35]]
+      };
+      (presets[type] || []).forEach(([f, off, dur]) => {
+        const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+        o.type = 'sine'; o.frequency.value = f;
+        g.gain.setValueAtTime(0.001, t0 + off);
+        g.gain.exponentialRampToValueAtTime(.18, t0 + off + .02);
+        g.gain.exponentialRampToValueAtTime(0.001, t0 + off + dur);
+        o.connect(g); g.connect(this.ctx.destination);
+        o.start(t0 + off); o.stop(t0 + off + dur + .05);
+      });
+    } catch (e) { }
+  }
+};
+
+/* ---------- النقاط والمستويات (النظام التراكمي XP) ---------- */
+const LEVEL_TITLES = { ar: ['بذرة ناشئة', 'مزارع مبتدئ', 'فني زراعي', 'خبير زراعي', 'أسطورة الحقول'], en: ['Sprout', 'Junior Farmer', 'Agri-Technician', 'Agri-Expert', 'Field Legend'] };
+const levelOf = p => Math.floor(p / 150) + 1;
+function addPoints(n) {
+  state.points += n; Store.set('points', state.points);
+  const el = $('#pointsVal'); el.textContent = state.points;
+  const pill = $('#pointsPill'); pill.classList.remove('points-pop'); void pill.offsetWidth; pill.classList.add('points-pop');
+}
+function refreshPoints() { $('#pointsVal').textContent = state.points; }
+
+/* ---------- الوضع الليلي/النهاري ---------- */
+function applyTheme() {
+  const dark = document.documentElement.classList.contains('dark');
+  $('#themeIcon').className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+}
+$('#themeBtn').addEventListener('click', () => {
+  document.documentElement.classList.toggle('dark');
+  Store.set('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+  applyTheme(); Sound.play('click');
+});
+
+/* ---------- تبديل اللغة عربي/إنجليزي (مع اتجاه RTL/LTR) ---------- */
+function applyLang() {
+  const L = state.lang;
+  document.documentElement.lang = L;
+  document.documentElement.dir = L === 'ar' ? 'rtl' : 'ltr';
+  $('#langBtn').textContent = L === 'ar' ? 'EN' : 'ع';
+  /* استبدال كل نص مُعلَّم بسمة data-i18n */
+  $$('[data-i18n]').forEach(e => { const v = t(e.dataset.i18n); if (typeof v === 'string') e.textContent = v; });
+  /* استبدال العناصر النائبة */
+  $$('[data-i18n-ph]').forEach(e => { const v = t(e.dataset.i18nPh); if (typeof v === 'string') e.placeholder = v; });
+  $('#profileBtn').textContent = L === 'ar' ? 'ع' : 'A';
+  buildTicker(); fillCropSelect(); renderN2Stages(); Courses.render(); Community.render(); Chat.renderChips();
+  Quiz.updateSetupBest();
+}
+$('#langBtn').addEventListener('click', () => {
+  state.lang = state.lang === 'ar' ? 'en' : 'ar';
+  Store.set('lang', state.lang);
+  applyLang(); Sound.play('click');
+});
+
+/* ---------- زر الصوت ---------- */
+function applySoundIcon() { $('#soundIcon').className = state.sound ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark'; }
+$('#soundBtn').addEventListener('click', () => { state.sound = !state.sound; Store.set('sound', state.sound); applySoundIcon(); if (state.sound) Sound.play('click'); });
+
+/* ---------- قائمة الجوال ---------- */
+$('#menuBtn').addEventListener('click', () => $('#mobileMenu').classList.toggle('hidden'));
+$$('#mobileMenu a').forEach(a => a.addEventListener('click', () => $('#mobileMenu').classList.add('hidden')));
+
+/* ---------- تمييز الرابط النشط أثناء التمرير ---------- */
+const spy = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      $$('#mainNav .nav-link').forEach(l => l.classList.toggle('active', l.dataset.section === e.target.id));
+    }
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+['home', 'courses', 'labs', 'quiz', 'community'].forEach(id => { const s = document.getElementById(id); if (s) spy.observe(s); });
+
+/* ---------- الظهور التدريجي للعناصر عند التمرير ---------- */
+const revealObs = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add('revealed'); revealObs.unobserve(e.target); }
+}), { threshold: .12 });
+$$('.reveal').forEach(e => revealObs.observe(e));
+
+/* ---------- عدّادات الإحصائيات المتحركة ---------- */
+function animateCounters() {
+  $$('.counter').forEach(el => {
+    const target = +el.dataset.target, dur = 1600, t0 = performance.now();
+    const step = now => {
+      const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * e).toLocaleString('en-US');
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
+let countersDone = false;
+new IntersectionObserver((es, obs) => {
+  if (es.some(e => e.isIntersecting) && !countersDone) { countersDone = true; animateCounters(); obs.disconnect(); }
+}, { threshold: .3 }).observe($('#home'));
+
+/* ---------- شريط الأخبار المتحرك ---------- */
+function buildTicker() {
+  const items = TICKER[state.lang];
+  const html = items.map(x => `<span class="whitespace-nowrap">${x}</span>`).join('');
+  $('#tickerTrack').innerHTML = html + html; /* نسختان لضمان استمرارية الحلقة */
+}
+
+/* ---------- ملف المستخدم (نافذة SweetAlert) ---------- */
+$('#profileBtn').addEventListener('click', () => {
+  const lvl = levelOf(state.points);
+  const titles = LEVEL_TITLES[state.lang];
+  const title = titles[Math.min(lvl - 1, titles.length - 1)];
+  const hist = Store.get('history', []);
+  const stats = `
+    <div class="grid grid-cols-2 gap-3 text-start mt-4" dir="${state.lang === 'ar' ? 'rtl' : 'ltr'}">
+      <div class="rounded-2xl bg-gold/10 border border-gold/25 p-3"><p class="text-xs font-bold text-slate-500">${t('prof_level')}</p><p class="font-black text-lg">${lvl} — ${title}</p></div>
+      <div class="rounded-2xl bg-mint/10 border border-mint/25 p-3"><p class="text-xs font-bold text-slate-500">${t('prof_points')}</p><p class="font-black text-lg">${state.points} XP</p></div>
+      <div class="rounded-2xl bg-sky-500/10 border border-sky-500/25 p-3"><p class="text-xs font-bold text-slate-500">${t('prof_quiz')}</p><p class="font-black text-lg">${hist.length}</p></div>
+      <div class="rounded-2xl bg-rose-500/10 border border-rose-500/25 p-3"><p class="text-xs font-bold text-slate-500">${t('prof_book')}</p><p class="font-black text-lg">${state.bookmarks.length}</p></div>
+    </div>
+    <p class="text-[11px] text-slate-400 font-bold mt-3">${t('pdf_d')}</p>`;
+  Swal.fire({
+    title: t('prof_t'), html: stats, confirmButtonColor: '#0F5132', confirmButtonText: t('ok_btn'),
+    showCancelButton: true, cancelButtonText: t('prof_reset'), cancelButtonColor: '#ef4444',
+    customClass: { popup: 'font-cairo' }
+  }).then(res => {
+    if (res.isDismissed && res.dismiss === Swal.DismissReason.cancel) {
+      Swal.fire({
+        icon: 'warning', title: t('conf_t'), text: t('conf_d'), showCancelButton: true,
+        confirmButtonText: t('conf_y'), confirmButtonColor: '#ef4444', cancelButtonText: t('conf_n'),
+        customClass: { popup: 'font-cairo' }
+      }).then(r2 => {
+        if (r2.isConfirmed) {
+          ['points', 'bookmarks', 'progress', 'likes', 'tips', 'history', 'best'].forEach(k => Store.del(k));
+          state.points = 0; state.bookmarks = []; state.progress = {}; state.likes = []; state.tips = [];
+          refreshPoints(); Courses.render(); Community.render(); Quiz.updateSetupBest();
+          notify(t('toast_reset') || 'تمت إعادة التعيين');
+        }
+      });
+    }
+  });
+});
+
+/* ---------- زر العودة للأعلى ---------- */
+const toTopBtn = $('#toTop');
+window.addEventListener('scroll', () => {
+  const show = window.scrollY > 600;
+  toTopBtn.classList.toggle('opacity-0', !show);
+  toTopBtn.classList.toggle('pointer-events-none', !show);
+});
+toTopBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); Sound.play('click'); });
+
+/* ---------- فتح المساعد الذكي من القائمة ---------- */
+function openChatFromNav(e) {
+  if (e) e.preventDefault();
+  Chat.toggle(true);
+  if (window.innerWidth < 640) notify(t('sw_chat_open'), 'info');
+}
+$('#navChat').addEventListener('click', openChatFromNav);
+$('#navChatM').addEventListener('click', openChatFromNav);
+
+/* ---------- الاشتراك في النشرة (تجريبي) ---------- */
+$('#newsBtn').addEventListener('click', () => {
+  const v = $('#newsEmail').value.trim();
+  if (!v || !v.includes('@')) { notify(t('toast_empty'), 'warning'); return; }
+  $('#newsEmail').value = ''; notify(t('toast_sub')); Sound.play('correct');
+});
+</script>
+
+<script>
+/* =====================================================================
+   AgriLearn — منطق التطبيق (الجزء الثاني): الدورات + حاسبة التسميد
+   ===================================================================== */
+
+/* ==================== مركز الدورات ==================== */
+const Courses = {
+  active: 'all',
+  render() {
+    const grid = $('#coursesGrid'); if (!grid) return;
+    const list = COURSES.filter(c => this.active === 'all' || c.dept === this.active);
+    const lvls = [t('lvl1'), t('lvl2'), t('lvl3')];
+    grid.innerHTML = list.map(c => {
+      const d = DEPTS[c.dept];
+      const prog = state.progress[c.id] || 0;
+      const bm = state.bookmarks.includes(c.id);
+      const title = (state.lang === 'en' && c.en) ? c.en : c.title;
+      return `
+      <article class="course-card glass rounded-3xl overflow-hidden glow-hover" data-id="${c.id}">
+        <div class="relative h-44" style="background:linear-gradient(135deg, ${d.color} -10%, #0F5132 115%)">
+          <i class="fa-solid ${d.icon} absolute -bottom-5 -end-3 text-[7rem] text-white/10 rotate-12 pointer-events-none"></i>
+          <div class="absolute top-3 start-3 flex gap-2">
+            <span class="px-2.5 py-1 rounded-full bg-black/35 text-white text-[11px] font-black backdrop-blur"><i class="fa-solid ${d.icon}"></i> ${d[state.lang]}</span>
+            <span class="px-2.5 py-1 rounded-full bg-white/90 text-primary text-[11px] font-black">${lvls[c.lvl - 1]}</span>
+          </div>
+          <button data-action="bookmark" class="absolute top-3 end-3 w-9 h-9 rounded-full grid place-items-center backdrop-blur transition ${bm ? 'bg-gold text-white scale-110' : 'bg-black/35 text-white hover:scale-110'}" aria-label="bookmark">
+            <i class="${bm ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+          </button>
+          <button data-action="video" class="absolute inset-0 m-auto w-14 h-14 rounded-full bg-white/90 text-primary grid place-items-center text-xl shadow-xl hover:scale-110 transition" aria-label="play video">
+            <i class="fa-solid fa-play ms-0.5"></i>
+          </button>
+          <div class="absolute bottom-0 inset-x-0 px-4 pb-3">
+            <div class="flex justify-between text-[11px] font-black text-white/90 mb-1"><span>${t('prog_lbl')}: ${prog}%</span><span><i class="fa-solid fa-star text-gold"></i> ${c.rating}</span></div>
+            <div class="h-2 rounded-full bg-white/25 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-mint to-gold bar-shine" style="width:${prog}%"></div></div>
+          </div>
+        </div>
+        <div class="p-5">
+          <h3 class="font-black text-lg leading-snug">${esc(title)}</h3>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">${esc(c.desc)}</p>
+          <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+            <span><i class="fa-solid fa-user-tie text-mint"></i> ${esc(c.inst)}</span>
+            <span><i class="fa-solid fa-list-check text-mint"></i> ${c.lessons} ${t('lessons')}</span>
+            <span><i class="fa-solid fa-clock text-mint"></i> ${c.hours} ${t('hours')}</span>
+          </div>
+          <div class="mt-4 grid grid-cols-3 gap-2">
+            <button data-action="continue" class="btn-primary text-white text-xs font-black py-2.5 rounded-xl">${prog === 0 ? t('start') : t('cont')}</button>
+            <button data-action="quiz" class="btn-ghost text-xs font-black py-2.5 rounded-xl bg-white/60 dark:bg-white/5"><i class="fa-solid fa-bolt text-gold"></i> ${t('take_quiz')}</button>
+            <button data-action="pdf" class="btn-ghost text-xs font-black py-2.5 rounded-xl bg-white/60 dark:bg-white/5"><i class="fa-solid fa-file-pdf text-red-500"></i> ${t('dl')}</button>
+          </div>
+        </div>
+      </article>`;
+    }).join('');
+  }
+};
+
+/* تفويض أحداث كروت الدورات */
+$('#coursesGrid').addEventListener('click', e => {
+  const btn = e.target.closest('[data-action]'); if (!btn) return;
+  const card = e.target.closest('.course-card'); if (!card) return;
+  const c = COURSES.find(x => x.id === card.dataset.id); if (!c) return;
+  switch (btn.dataset.action) {
+    case 'bookmark': {
+      const i = state.bookmarks.indexOf(c.id);
+      if (i === -1) { state.bookmarks.push(c.id); notify(t('toast_book_add')); }
+      else { state.bookmarks.splice(i, 1); notify(t('toast_book_rm'), 'info'); }
+      Store.set('bookmarks', state.bookmarks); Courses.render(); Sound.play('click');
+      break;
+    }
+    case 'video': {
+      const ok = c.videoId && c.videoId !== 'PLACEHOLDER';
+      const inner = ok
+        ? `<div class="rounded-2xl overflow-hidden shadow-lg aspect-video"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${encodeURIComponent(c.videoId)}" title="course video" allowfullscreen frameborder="0"></iframe></div>`
+        : `<div class="rounded-2xl overflow-hidden shadow-lg aspect-video bg-gradient-to-br from-slate-800 to-primary grid place-items-center relative">
+             <div class="text-center p-6"><i class="fa-solid fa-circle-play text-6xl text-mint mb-3 block"></i>
+             <p class="text-white/90 text-sm font-bold max-w-xs mx-auto">${t('v_d')}</p></div>
+             <span class="absolute top-3 end-3 px-2 py-0.5 rounded bg-red-600 text-white text-[10px] font-black">DEMO</span>
+           </div>`;
+      Swal.fire({ title: ok ? c.title : t('v_t'), html: inner, width: 680, confirmButtonText: t('ok_btn'), confirmButtonColor: '#0F5132', customClass: { popup: 'font-cairo' } });
+      Sound.play('click');
+      break;
+    }
+    case 'continue': {
+      const cur = state.progress[c.id] || 0;
+      if (cur >= 100) { notify(t('sw_complete')); break; }
+      const nv = Math.min(100, cur + 15);
+      state.progress[c.id] = nv; Store.set('progress', state.progress);
+      if (nv >= 100) {
+        addPoints(20);
+        Swal.fire({ icon: 'success', title: t('sw_complete'), confirmButtonText: t('ok_btn'), confirmButtonColor: '#0F5132', customClass: { popup: 'font-cairo' } });
+        Sound.play('win');
+      } else { notify(t('sw_progress')); Sound.play('correct'); }
+      Courses.render();
+      break;
+    }
+    case 'quiz': Quiz.preset(c.dept); break;
+    case 'pdf': downloadSummary(c); break;
+  }
+});
+
+/* تبويبات الأقسام */
+$('#deptTabs').addEventListener('click', e => {
+  const b = e.target.closest('.dept-tab'); if (!b || b.classList.contains('active')) return;
+  $$('#deptTabs .dept-tab').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  Courses.active = b.dataset.dept; Courses.render(); Sound.play('click');
+});
+
+/** تنزيل ملخص الدورة كملف HTML جاهز للطباعة
+ *  (في الإنتاج: استبدل الدالة برابط PDF حقيقي من Supabase Storage) */
+function downloadSummary(c) {
+  const d = DEPTS[c.dept];
+  const topics = d.topics.map((tp, i) => `<li><b>الوحدة ${i + 1}:</b> ${tp}</li>`).join('');
+  const html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>ملخص — ${esc(c.title)}</title>
+<style>body{font-family:'Cairo',Tahoma,sans-serif;max-width:720px;margin:40px auto;padding:0 20px;color:#1e293b;line-height:1.9}
+.hd{background:linear-gradient(135deg,#0F5132,#20C997);color:#fff;border-radius:18px;padding:26px}
+.hd h1{margin:0 0 6px;font-size:24px}.meta{opacity:.9;font-size:14px}
+.chip{display:inline-block;background:#e6fbf4;color:#0F5132;border:1px solid #99f6e4;border-radius:999px;padding:3px 12px;font-size:12px;font-weight:800;margin-inline-end:6px}
+ol li{margin-bottom:8px}.box{border:1px solid #e2e8f0;border-radius:14px;padding:18px;margin-top:18px}
+.ft{margin-top:26px;font-size:12px;color:#94a3b8;text-align:center}</style></head><body>
+<div class="hd"><h1>${esc(c.title)}</h1><div class="meta">${esc(c.inst)} — ${esc(d.ar)}</div></div>
+<p class="box">${esc(c.desc)}</p>
+<div class="box"><b>محاور الدورة (${c.lessons} درسًا — ${c.hours} ساعة):</b><ol>${topics}</ol></div>
+<div class="box"><b>مستوى الدورة:</b> ${['مبتدئ', 'متوسط', 'متقدم'][c.lvl - 1]} &nbsp;|&nbsp; <b>التقييم:</b> ⭐ ${c.rating}</div>
+<p class="ft">صُدر آليًا من منصة AgriLearn — رفيق الزراعة © 2026 (ملخص تجريبي لأغراض العرض)</p></body></html>`;
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `AgriLearn-${c.id}-summary.html`;
+  a.click(); URL.revokeObjectURL(a.href);
+  notify(t('toast_pdf')); Sound.play('correct');
+}
+
+/* ==================== حاسبة التسميد N-P-K ==================== */
+/** ربط شريط تمرير بقيمة معروضة وتلوين المسار */
+function bindRange(id, outId) {
+  const r = $(id), o = $(outId);
+  const f = () => {
+    const pct = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.setProperty('--val', pct + '%');
+    o.textContent = r.value;
+  };
+  r.addEventListener('input', f); f();
+}
+
+/** تعبئة قائمة المحاصيل (تُعاد عند تغيير اللغة) */
+function fillCropSelect() {
+  const sel = $('#npkCrop'); if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = Object.keys(NPK_BASE).map(k => `<option value="${k}">${t('crops.' + k)}</option>`).join('');
+  if (cur) sel.value = cur;
+}
+
+function initNPK() {
+  bindRange('#npkArea', '#npkAreaV');
+  bindRange('#npkN', '#npkNV');
+  bindRange('#npkP', '#npkPV');
+  bindRange('#npkK', '#npkKV');
+  $('#npkCalc').addEventListener('click', () => {
+    const key = $('#npkCrop').value;
+    const base = NPK_BASE[key] || NPK_BASE.wheat;
+    const area = +$('#npkArea').value;
+    /* معامل التوفر: كلما زاد العنصر المتاح بالتربة قلّت الحاجة للإضافة (حد أدنى 30٪) */
+    const f = ratio => Math.max(.3, 1 - .7 * ratio);
+    const need = {
+      n: +(base.n * f(+$('#npkN').value / 100)).toFixed(1),
+      p: +(base.p * f(+$('#npkP').value / 50)).toFixed(1),
+      k: +(base.k * f(+$('#npkK').value / 400)).toFixed(1)
+    };
+    /* تحويل الاحتياج لكميات أسمدة تجارية × المساحة */
+    const fert = {
+      urea: +(need.n / .46 * area).toFixed(1),
+      ssp:  +(need.p / .155 * area).toFixed(1),
+      kso4: +(need.k / .50 * area).toFixed(1)
+    };
+    const maxF = Math.max(fert.urea, fert.ssp, fert.kso4, 1);
+    const row = (letter, color, fertName, needKg, prodKg) => `
+      <div>
+        <div class="flex items-center justify-between gap-2 text-sm font-black">
+          <span><b class="${color}">${letter}</b> — ${fertName}</span>
+          <span class="text-mint">${prodKg} ${t('npk_kg_unit')}</span>
+        </div>
+        <div class="h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden my-1.5">
+          <div class="h-full rounded-full bg-gradient-to-r from-mint to-primary" style="width:${Math.round(prodKg / maxF * 100)}%"></div>
+        </div>
+        <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400">${t('npk_need')}: ${needKg} ${t('npk_kg_unit')} / ${t('npk_total')}: ${prodKg} ${t('npk_kg_unit')}</p>
+      </div>`;
+    $('#npkResult').innerHTML = `
+      ${row('N', 'text-sky-500', t('fert_urea'), need.n, fert.urea)}
+      ${row('P', 'text-orange-500', t('fert_ssp'), need.p, fert.ssp)}
+      ${row('K', 'text-violet-500', t('fert_kso4'), need.k, fert.kso4)}
+      <div class="rounded-xl bg-gold/10 border border-gold/25 p-3 text-xs font-bold text-slate-600 dark:text-slate-300">
+        <i class="fa-solid fa-lightbulb text-gold"></i> ${base.tip}
+      </div>`;
+    $('#npkResult').classList.remove('hidden');
+    Sound.play('correct');
+  });
+}
+</script>
+
+<script>
+/* =====================================================================
+   AgriLearn — منطق التطبيق (الجزء الثالث): دورة النيتروجين + التشخيص الذكي
+   ===================================================================== */
+
+/* ==================== دورة النيتروجين التفاعلية ==================== */
+let n2TourTimer = null;
+const N2_KEYS = Object.keys(N2_STAGES);
+
+/** بناء أزرار المراحل (يُعاد عند تغيير اللغة) */
+function renderN2Stages() {
+  const wrap = $('#n2Stages'); if (!wrap) return;
+  const colors = { fix: '#8B5CF6', nit: '#F59E0B', assim: '#22C55E', ammo: '#B45309', deni: '#EF4444' };
+  wrap.innerHTML = N2_KEYS.map(k => {
+    const s = N2_STAGES[k];
+    const label = state.lang === 'en' ? s.en : s.title;
+    return `<button class="chip" data-n2="${k}" style="--tc:${colors[k]};border-color:${colors[k]}55;color:${colors[k]}" data-lang>${label}</button>`;
+  }).join('');
+}
+function clearN2() {
+  $$('#n2Svg .edge').forEach(p => p.classList.remove('lit'));
+  $$('#n2Svg .cnode').forEach(g => g.classList.remove('dim'));
+  $$('#n2Stages .chip').forEach(b => { b.classList.remove('active'); b.style.background = ''; b.style.color = ''; });
+}
+function showN2Stage(key) {
+  const s = N2_STAGES[key]; if (!s) return;
+  clearN2();
+  s.edges.forEach(id => { const p = document.getElementById(id); if (p) p.classList.add('lit'); });
+  const btn = $(`#n2Stages [data-n2="${key}"]`);
+  if (btn) { btn.classList.add('active'); btn.style.background = 'var(--primary)'; btn.style.color = '#fff'; }
+  const desc = state.lang === 'en' ? s.descEn : s.desc;
+  const tip = state.lang === 'en' ? s.tipEn : s.tip;
+  $('#n2Info').innerHTML = `
+    <div class="flex flex-wrap items-center gap-2">
+      <h4 class="font-black text-lg">${state.lang === 'en' ? s.en : s.title}</h4>
+      <span class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary dark:bg-mint/15 dark:text-mint text-xs font-black" dir="ltr">${s.eq}</span>
+    </div>
+    <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">${desc}</p>
+    <div class="mt-3 rounded-xl bg-gold/10 border border-gold/25 p-3 text-xs font-bold text-slate-600 dark:text-slate-300">
+      <i class="fa-solid fa-leaf text-gold"></i> <b>${t('n2_tip_lbl')}</b> ${tip}
+    </div>`;
+  Sound.play('click');
+}
+function stopN2Tour() {
+  if (n2TourTimer) { clearInterval(n2TourTimer); n2TourTimer = null; $('#n2Tour').textContent = t('n2_tour'); }
+}
+$('#n2Stages').addEventListener('click', e => {
+  const b = e.target.closest('[data-n2]'); if (!b) return;
+  stopN2Tour(); showN2Stage(b.dataset.n2);
+});
+$('#n2Tour').addEventListener('click', () => {
+  if (n2TourTimer) { stopN2Tour(); return; }
+  let i = 0; showN2Stage(N2_KEYS[i]);
+  $('#n2Tour').textContent = t('n2_pause');
+  n2TourTimer = setInterval(() => { i = (i + 1) % N2_KEYS.length; showN2Stage(N2_KEYS[i]); }, 3200);
+});
+/* نقر المستخدم على العقد نفسها في الرسم يعرض أول مرحلة مرتبطة بها */
+$('#n2Svg').addEventListener('click', e => {
+  const node = e.target.closest('.cnode'); if (!node) return;
+  const map = { atm: 'fix', fix: 'fix', plant: 'assim', residue: 'ammo', ammon: 'nit', nitrite: 'nit', nitrate: 'assim', deni: 'deni' };
+  showN2Stage(map[node.dataset.node] || 'fix');
+});
+
+/* ==================== التشخيص الذكي لأمراض النبات ==================== */
+/** صورة تجريبية مولّدة داخليًا (ورقة بها بقع) — لا حاجة لاتصال بالإنترنت */
+const SAMPLE_LEAF = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180">
+    <rect width="240" height="180" fill="#f0fdf4"/>
+    <ellipse cx="120" cy="90" rx="92" ry="52" fill="#2f9e44" transform="rotate(-18 120 90)"/>
+    <path d="M35 115 Q120 45 208 68" stroke="#1b6b2f" stroke-width="5" fill="none"/>
+    <path d="M60 102 L75 82 M100 88 L112 68 M145 82 L152 62" stroke="#1b6b2f" stroke-width="3" fill="none"/>
+    <circle cx="88" cy="78" r="9" fill="#fde047"/><circle cx="88" cy="78" r="5" fill="#7c4a1e"/>
+    <circle cx="140" cy="95" r="11" fill="#fde047"/><circle cx="140" cy="95" r="6" fill="#7c4a1e"/>
+    <circle cx="172" cy="72" r="8" fill="#fde047"/><circle cx="172" cy="72" r="4.5" fill="#7c4a1e"/>
+    <circle cx="112" cy="115" r="7" fill="#fde047"/><circle cx="112" cy="115" r="4" fill="#7c4a1e"/>
+  </svg>`);
+
+const Diag = {
+  src: null,
+  stepIcons: ['fa-image', 'fa-magnifying-glass-chart', 'fa-database', 'fa-file-medical'],
+  resetSteps() {
+    $$('#diagSteps li').forEach((li, i) => {
+      li.classList.add('opacity-40');
+      const ico = li.querySelector('.step-ico');
+      ico.className = 'step-ico w-9 h-9 rounded-full grid place-items-center bg-slate-200 dark:bg-white/10 text-sm shrink-0';
+      ico.innerHTML = `<i class="fa-solid ${this.stepIcons[i]}"></i>`;
+      li.querySelector('.step-check').style.opacity = 0;
+    });
+    $('#diagBar').style.width = '0%';
+    $('#diagIdle').classList.remove('hidden');
+    $('#diagResult').classList.add('hidden');
+  },
+  preview(src, name) {
+    this.src = src;
+    $('#previewImg').src = src;
+    $('#imgName').textContent = name || '';
+    $('#dzEmpty').classList.add('hidden');
+    $('#dzPreview').classList.remove('hidden');
+    this.resetSteps();
+    Sound.play('click');
+  },
+  clear() {
+    this.src = null; $('#fileInput').value = '';
+    $('#dzEmpty').classList.remove('hidden');
+    $('#dzPreview').classList.add('hidden');
+    this.resetSteps();
+  },
+  wait: ms => new Promise(r => setTimeout(r, ms)),
+  async runStep(i) {
+    const li = $(`#diagSteps li[data-step="${i}"]`);
+    const ico = li.querySelector('.step-ico');
+    ico.innerHTML = '<span class="sk-circle"></span>';
+    await this.wait(rnd(550, 950));
+    ico.className = 'step-ico w-9 h-9 rounded-full grid place-items-center bg-mint text-white text-sm shrink-0';
+    ico.innerHTML = '<i class="fa-solid fa-check"></i>';
+    li.classList.remove('opacity-40');
+    li.querySelector('.step-check').style.opacity = 1;
+    $('#diagBar').style.width = (i * 25) + '%';
+  },
+  async run() {
+    if (!this.src) return; /* لا يوجد شيء لتحليله */
+    this.resetSteps();
+    $('#diagIdle').classList.add('hidden');
+    for (let i = 1; i <= 4; i++) await this.runStep(i);
+    /* اختيار نتيجة تجريبية من قاعدة بيانات الأمراض */
+    const d = DISEASES[rnd(0, DISEASES.length - 1)];
+    const conf = rnd(d.conf[0], d.conf[1]);
+    const sevMap = { l: ['sev_l', 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30', 'w-1/4'], m: ['sev_m', 'bg-amber-500/15 text-amber-600 border-amber-500/30', 'w-1/2'], h: ['sev_h', 'bg-red-500/15 text-red-600 border-red-500/30', 'w-3/4'] };
+    const [sevLbl, sevCls] = sevMap[d.sev];
+    const last = this.lastResult = { disease: d, conf, date: new Date().toLocaleString(state.lang === 'ar' ? 'ar-EG' : 'en-GB') };
+    $('#diagResult').innerHTML = `
+      <div class="rounded-2xl border border-mint/30 bg-mint/5 p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h4 class="font-black text-lg"><i class="fa-solid fa-stethoscope text-mint"></i> ${t('r_disease')}: ${d.name}</h4>
+          <span class="px-3 py-1 rounded-full border text-xs font-black ${sevCls}">${t('r_sev')}: ${t(sevLbl)}</span>
+        </div>
+        <div class="mt-3">
+          <div class="flex justify-between text-xs font-black mb-1"><span>${t('r_conf')}</span><span class="text-mint">${conf}%</span></div>
+          <div class="h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-mint to-primary transition-all duration-700" style="width:${conf}%"></div></div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4 mt-4 text-start">
+          <div class="rounded-xl bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 p-4">
+            <p class="font-black text-sm mb-2"><i class="fa-solid fa-prescription text-red-500"></i> ${t('r_treat')}</p>
+            <ol class="list-decimal ps-5 space-y-1.5 text-xs font-bold text-slate-600 dark:text-slate-300">${d.treat.map(x => `<li>${x}</li>`).join('')}</ol>
+          </div>
+          <div class="rounded-xl bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 p-4">
+            <p class="font-black text-sm mb-2"><i class="fa-solid fa-shield-halved text-mint"></i> ${t('r_prev')}</p>
+            <ul class="list-disc ps-5 space-y-1.5 text-xs font-bold text-slate-600 dark:text-slate-300">${d.prev.map(x => `<li>${x}</li>`).join('')}</ul>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2 mt-4">
+          <button id="diagSave" class="btn-primary text-white text-sm font-black px-5 py-2.5 rounded-xl"><i class="fa-solid fa-download"></i> ${t('r_save')}</button>
+          <button id="diagAgain" class="btn-ghost text-sm font-black px-5 py-2.5 rounded-xl bg-white/60 dark:bg-white/5"><i class="fa-solid fa-rotate"></i> ${t('r_again')}</button>
+        </div>
+      </div>`;
+    $('#diagResult').classList.remove('hidden');
+    Sound.play('win');
+    $('#diagSave').addEventListener('click', () => this.saveReport(last));
+    $('#diagAgain').addEventListener('click', () => { this.clear(); });
+  },
+  saveReport(r) {
+    const d = r.disease;
+    const html = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>تقرير تشخيص — AgriLearn</title>
+<style>body{font-family:'Cairo',Tahoma,sans-serif;max-width:680px;margin:40px auto;padding:0 20px;color:#1e293b;line-height:1.9}
+.hd{background:linear-gradient(135deg,#0F5132,#20C997);color:#fff;border-radius:16px;padding:22px}.hd h1{margin:0;font-size:22px}
+.box{border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-top:16px}.muted{color:#64748b;font-size:13px}
+.ft{margin-top:22px;font-size:12px;color:#94a3b8;text-align:center}</style></head><body>
+<div class="hd"><h1>🩺 تقرير التشخيص الذكي</h1><p class="muted" style="color:#d1fae5">${r.date}</p></div>
+<div class="box"><b>التشخيص:</b> ${d.name}<br><b>درجة الثقة:</b> ${r.conf}%<br><b>الخطورة:</b> ${({ l: 'منخفضة', m: 'متوسطة', h: 'مرتفعة' })[d.sev]}</div>
+<div class="box"><b>خطة العلاج:</b><ol>${d.treat.map(x => `<li>${x}</li>`).join('')}</ol></div>
+<div class="box"><b>الوقاية:</b><ul>${d.prev.map(x => `<li>${x}</li>`).join('')}</ul></div>
+<p class="ft">أصدره رفيق الزراعة — AgriLearn © 2026 (نتائج تجريبية لأغراض التعليم)</p></body></html>`;
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'AgriLearn-diagnosis-report.html';
+    a.click(); URL.revokeObjectURL(a.href);
+    notify(t('toast_report')); Sound.play('correct');
+  },
+  init() {
+    const dz = $('#dropZone'), fi = $('#fileInput');
+    dz.addEventListener('click', e => { if (e.target === dz || e.target.closest('#dzEmpty')) fi.click(); });
+    $('#browseBtn').addEventListener('click', e => { e.stopPropagation(); fi.click(); });
+    $('#sampleBtn').addEventListener('click', e => { e.stopPropagation(); this.preview(SAMPLE_LEAF, state.lang === 'ar' ? 'ورقة تجريبية (محاكاة)' : 'Demo leaf (simulated)'); });
+    $('#changeImg').addEventListener('click', e => { e.stopPropagation(); this.clear(); });
+    $('#analyzeBtn').addEventListener('click', e => { e.stopPropagation(); this.run(); });
+    fi.addEventListener('change', () => {
+      const f = fi.files[0]; if (!f) return;
+      const rd = new FileReader();
+      rd.onload = ev => this.preview(ev.target.result, f.name);
+      rd.readAsDataURL(f);
+    });
+    ['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('dragover'); }));
+    ['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('dragover'); }));
+    dz.addEventListener('drop', e => {
+      const f = e.dataTransfer.files[0];
+      if (f && f.type.startsWith('image/')) {
+        const rd = new FileReader();
+        rd.onload = ev => this.preview(ev.target.result, f.name);
+        rd.readAsDataURL(f);
+      }
+    });
+    this.resetSteps();
+  }
+};
+</script>
+
+<script>
+/* =====================================================================
+   AgriLearn — منطق التطبيق (الجزء الرابع): ساحة الاختبارات + المجتمع + المساعد الذكي + الإقلاع
+   ===================================================================== */
+
+/* ==================== ساحة الاختبارات (Gamified Quiz Engine) ==================== */
+const Quiz = {
+  cat: 'all', count: 10,
+  qs: [], i: 0, correct: 0, wrong: [], answered: false,
+  timer: null, left: Q_TIME, t0: 0, xpGain: 0, totalTime: 0,
+
+  updateSetupBest() {
+    const el = $('#quizBest'); if (!el) return;
+    const best = Store.get('best', {});
+    const names = { all: t('q_all'), soil: t('f_soil'), genetics: t('f_genetics'), pathology: t('f_pathology'), animal: t('f_animal'), irrigation: t('f_irrigation') };
+    const parts = Object.keys(best).filter(k => best[k] !== undefined)
+      .map(k => `${names[k] || k}: <b class="text-mint">${best[k]}%</b>`);
+    el.innerHTML = parts.length ? `<i class="fa-solid fa-medal text-gold"></i> ${t('q_best')} — ${parts.join(' &nbsp;•&nbsp; ')}` : `<i class="fa-solid fa-medal text-gold"></i> ${t('q_best')}: —`;
+  },
+
+  updateChips() {
+    $$('#quizCats .chip').forEach(c => c.classList.toggle('active', c.dataset.cat === this.cat));
+    $$('#quizCounts .chip').forEach(c => c.classList.toggle('active', c.dataset.count === String(this.count)));
+  },
+
+  start() {
+    const pool = QUESTIONS.filter(q => this.cat === 'all' || q.cat === this.cat);
+    const n = this.count === 'all' ? pool.length : Math.min(+this.count, pool.length);
+    this.qs = [...pool].sort(() => Math.random() - .5).slice(0, n);
+    if (!this.qs.length) return;
+    this.i = 0; this.correct = 0; this.wrong = []; this.xpGain = 0; this.totalTime = 0;
+    $('#quizSetup').classList.add('hidden');
+    $('#quizResult').classList.add('hidden');
+    $('#quizPlay').classList.remove('hidden');
+    Sound.play('click');
+    this.showQ();
+  },
+
+  showQ() {
+    const q = this.qs[this.i];
+    this.answered = false; this.left = Q_TIME; this.t0 = Date.now();
+    $('#quizProg').textContent = `${this.i + 1} / ${this.qs.length}`;
+    $('#quizBar').style.width = (this.i / this.qs.length * 100) + '%';
+    $('#quizLivePts').textContent = this.xpGain;
+    $('#quizCat').textContent = DEPTS[q.cat] ? DEPTS[q.cat][state.lang] : t('q_all');
+    $('#quizQ').textContent = q.q;
+
+    /* خيارات السؤال — صح/خطأ تُترجم ديناميكيًا */
+    const labels = q.type === 'tf' ? [t('q_true'), t('q_false')] : q.opts;
+    const letters = state.lang === 'ar' ? ['أ', 'ب', 'ج', 'د'] : ['A', 'B', 'C', 'D'];
+    $('#quizOpts').innerHTML = labels.map((o, idx) => `
+      <button class="opt-btn" data-i="${idx}">
+        <span class="w-7 h-7 rounded-lg bg-primary/10 dark:bg-white/10 grid place-items-center text-xs font-black shrink-0">${letters[idx] || idx + 1}</span>
+        <span>${esc(o)}</span>
+      </button>`).join('');
+    $('#quizExp').classList.add('hidden');
+    $('#quizNext').classList.add('hidden');
+    this.startTimer();
+  },
+
+  startTimer() {
+    clearInterval(this.timer);
+    this.renderTime();
+    this.timer = setInterval(() => {
+      this.left--;
+      this.renderTime();
+      if (this.left <= 5 && this.left > 0) Sound.play('tick');
+      if (this.left <= 0) { clearInterval(this.timer); this.answer(-1, true); }
+    }, 1000);
+  },
+
+  renderTime() {
+    const el = $('#quizTimerVal');
+    el.textContent = `${Math.max(0, this.left)} ${t('q_time')}`;
+    el.parentElement.classList.toggle('text-red-500', this.left <= 5);
+    el.parentElement.classList.toggle('animate-pulse', this.left <= 5);
+  },
+
+  answer(idx, timeout = false) {
+    if (this.answered) return;
+    this.answered = true;
+    clearInterval(this.timer);
+    const q = this.qs[this.i];
+    const secs = Math.max(1, Math.round((Date.now() - this.t0) / 1000));
+    this.totalTime += secs;
+    const btns = $$('#quizOpts .opt-btn');
+    btns.forEach(b => b.disabled = true);
+    const ok = idx === q.correct;
+    const labels = q.type === 'tf' ? [t('q_true'), t('q_false')] : q.opts;
+
+    if (ok) {
+      this.correct++;
+      this.xpGain += 10 + (secs < 10 ? 2 : 0); /* مكافأة سرعة */
+      Sound.play('correct');
+      if (btns[idx]) btns[idx].classList.add('correct');
+    } else {
+      Sound.play('wrong');
+      if (idx >= 0 && btns[idx]) btns[idx].classList.add('wrong');
+      if (btns[q.correct]) btns[q.correct].classList.add('correct');
+      this.wrong.push({
+        q,
+        chosen: timeout ? '⏰ ' + t('q_timeout') : (idx >= 0 ? labels[idx] : '—'),
+        correctLbl: labels[q.correct]
+      });
+    }
+
+    $('#quizExp').classList.remove('hidden');
+    $('#quizExp').innerHTML = `
+      <p class="font-black ${ok ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}">
+        <i class="fa-solid ${ok ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> ${ok ? t('q_correct') : (timeout ? t('q_timeout') : t('q_wrong'))}
+      </p>
+      <p class="mt-1.5 text-sm font-bold text-slate-600 dark:text-slate-300 leading-relaxed">
+        <b class="text-mint">${t('q_exp')}:</b> ${esc(q.exp)}
+      </p>`;
+    $('#quizLivePts').textContent = this.xpGain;
+    $('#quizBar').style.width = ((this.i + 1) / this.qs.length * 100) + '%';
+
+    const nx = $('#quizNext');
+    nx.classList.remove('hidden');
+    nx.innerHTML = this.i === this.qs.length - 1
+      ? `<i class="fa-solid fa-flag-checkered"></i> ${t('q_finish')}`
+      : `${t('q_next')} <i class="fa-solid ${state.lang === 'ar' ? 'fa-arrow-left' : 'fa-arrow-right'}"></i>`;
+  },
+
+  next() {
+    if (this.i < this.qs.length - 1) { this.i++; this.showQ(); }
+    else this.finish();
+  },
+
+  finish() {
+    clearInterval(this.timer);
+    const total = this.qs.length;
+    const pct = Math.round(this.correct / total * 100);
+    addPoints(this.xpGain);
+    /* حفظ أفضل نتيجة وسجل المحاولات */
+    const best = Store.get('best', {});
+    if (!best[this.cat] || pct > best[this.cat]) { best[this.cat] = pct; Store.set('best', best); }
+    const hist = Store.get('history', []);
+    hist.push({ d: Date.now(), cat: this.cat, pct });
+    Store.set('history', hist.slice(-30));
+
+    $('#quizPlay').classList.add('hidden');
+    $('#quizResult').classList.remove('hidden');
+    $('#resArc').style.strokeDashoffset = 326.7 * (1 - pct / 100);
+    $('#resPct').textContent = pct + '%';
+    const g = pct >= 90 ? 'res_g1' : pct >= 70 ? 'res_g2' : pct >= 50 ? 'res_g3' : 'res_g4';
+    $('#resTitle').textContent = t(g);
+    const catName = DEPTS[this.cat] ? DEPTS[this.cat][state.lang] : t('q_all');
+    $('#resSub').textContent = t('res_sub_p').replace('{c}', this.correct).replace('{t}', total).replace('{s}', catName);
+    $('#resCorrect').textContent = this.correct;
+    $('#resWrong').textContent = total - this.correct;
+    $('#resXp').textContent = '+' + this.xpGain;
+    $('#resTime').textContent = this.totalTime;
+
+    const list = $('#reviewList');
+    if (this.wrong.length) {
+      list.classList.remove('hidden');
+      $('#noWrong').classList.add('hidden');
+      list.innerHTML = this.wrong.map(w => `
+        <div class="rounded-2xl border border-red-200 dark:border-red-500/20 bg-red-50/60 dark:bg-red-500/10 p-4">
+          <p class="font-black text-sm leading-relaxed">${esc(w.q.q)}</p>
+          <p class="mt-1.5 text-xs font-black text-red-500"><i class="fa-solid fa-xmark"></i> ${t('q_yours')}: ${esc(w.chosen)}</p>
+          <p class="text-xs font-black text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-check"></i> ${t('q_right')}: ${esc(w.correctLbl)}</p>
+          <p class="mt-1.5 text-xs font-bold text-slate-500 dark:text-slate-400 leading-relaxed"><b class="text-mint">${t('q_exp')}:</b> ${esc(w.q.exp)}</p>
+        </div>`).join('');
+    } else {
+      list.innerHTML = '';
+      list.classList.add('hidden');
+      const nw = $('#noWrong'); nw.classList.remove('hidden'); nw.textContent = t('q_noWrong');
+    }
+    Sound.play('win');
+    this.updateSetupBest();
+  },
+
+  preset(dept) {
+    this.cat = dept; this.updateChips(); this.updateSetupBest();
+    document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => this.start(), 700);
+  }
+};
+
+/* أحداث ساحة الاختبارات */
+$('#quizCats').addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) { Quiz.cat = b.dataset.cat; Quiz.updateChips(); Sound.play('click'); } });
+$('#quizCounts').addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) { Quiz.count = +b.dataset.count; Quiz.updateChips(); Sound.play('click'); } });
+$('#quizStartBtn').addEventListener('click', () => Quiz.start());
+$('#quizOpts').addEventListener('click', e => { const b = e.target.closest('.opt-btn'); if (b) Quiz.answer(+b.dataset.i); });
+$('#quizNext').addEventListener('click', () => Quiz.next());
+$('#retryBtn').addEventListener('click', () => Quiz.start());
+$('#newQuizBtn').addEventListener('click', () => { $('#quizResult').classList.add('hidden'); $('#quizSetup').classList.remove('hidden'); Sound.play('click'); });
+
+/* ==================== المجتمع ولوحة الشرف ==================== */
+const Community = {
+  render() {
+    /* لوحة الشرف: بيانات أولية + المستخدم الحالي مرتبة بالنقاط */
+    const all = [...LB_SEED.map(u => [u[0], u[1], false]), [t('lb_you'), state.points, true]]
+      .sort((a, b) => b[1] - a[1]).slice(0, 6);
+    const medals = ['🥇', '🥈', '🥉'];
+    $('#lbList').innerHTML = all.map((u, i) => `
+      <li class="flex items-center gap-3 rounded-2xl px-3 py-2.5 ${u[2] ? 'bg-gold/15 border border-gold/30' : ''}">
+        <span class="w-8 text-center font-black">${medals[i] || (i + 1)}</span>
+        <span class="w-9 h-9 rounded-full grid place-items-center font-black text-white shrink-0 ${u[2] ? 'btn-primary' : 'bg-slate-300 dark:bg-white/15'}">${esc(u[0][0])}</span>
+        <span class="font-bold flex-1 truncate ${u[2] ? 'text-gold' : ''}">${esc(u[0])}${u[2] ? ' ✨' : ''}</span>
+        <span class="font-black text-sm text-mint shrink-0">${u[1].toLocaleString('en-US')} XP</span>
+      </li>`).join('');
+
+    /* خلاصة النصائح: نصائح المستخدم أولًا ثم النصائح الأولية */
+    const tips = [...state.tips, ...SEED_TIPS];
+    $('#tipsFeed').innerHTML = tips.map(tp => {
+      const liked = state.likes.includes(tp.id);
+      return `
+      <article class="glass rounded-2xl p-4">
+        <div class="flex items-center gap-3">
+          <span class="w-10 h-10 rounded-full bg-mint/15 text-mint grid place-items-center font-black shrink-0">${esc(tp.n[0])}</span>
+          <div><p class="font-black text-sm">${esc(tp.n)}</p><p class="text-[11px] text-slate-400 font-bold">${esc(tp.t)}</p></div>
+        </div>
+        <p class="mt-3 text-sm leading-relaxed">${esc(tp.x)}</p>
+        <button data-tip="${tp.id}" class="like-btn mt-3 inline-flex items-center gap-2 text-sm font-black transition ${liked ? 'text-rose-500' : 'text-slate-400 hover:text-rose-400'}">
+          <i class="${liked ? 'fa-solid' : 'fa-regular'} fa-heart"></i> ${tp.l + (liked ? 1 : 0)}
+        </button>
+      </article>`;
+    }).join('');
+  }
+};
+
+$('#tipsFeed').addEventListener('click', e => {
+  const b = e.target.closest('.like-btn'); if (!b) return;
+  const id = b.dataset.tip;
+  const i = state.likes.indexOf(id);
+  if (i === -1) { state.likes.push(id); notify(t('toast_like')); Sound.play('correct'); }
+  else { state.likes.splice(i, 1); Sound.play('click'); }
+  Store.set('likes', state.likes);
+  Community.render();
+});
+$('#postTip').addEventListener('click', () => {
+  const ta = $('#tipText');
+  const txt = ta.value.trim();
+  if (!txt) { notify(t('toast_empty'), 'warning'); return; }
+  state.tips.unshift({ id: 'u' + Date.now(), n: t('lb_you'), t: t('now_lbl'), x: txt.slice(0, 300), l: 0 });
+  Store.set('tips', state.tips.slice(0, 30));
+  ta.value = '';
+  Community.render();
+  notify(t('toast_posted')); Sound.play('correct');
+});
+
+/* ==================== المساعد الذكي «رفيق الزراعة» ==================== */
+/** ردود تجريبية محلية عبر قاعدة معرفة بالكلمات المفتاحية */
+const BOT_KB = [
+  { k: ['سلام', 'مرحبا', 'هلا', 'اهلا', 'أهلا', 'hi', 'hello'], a: 'أهلًا وسهلًا 🌱 أنا هنا للإجابة عن أسئلتك في التسميد والري والأمراض والدورات — تفضل بسؤالك!' },
+  { k: ['نيتروجين', 'نتروجين', 'اصفرار'], a: 'نقص النيتروجين يبدأ باصفرار الأوراق <b>السفلية القديمة</b> ثم ينتشر، مع ضعف النمو وقلّة التفرع.<br>💡 الحل: تسميد نيتروجيني مقسّم على دفعتين، ويمكنك حساب الجرعة الدقيقة لمحصولك من <b>حاسبة N-P-K</b> في المختبرات الذكية 🧪' },
+  { k: ['ري', 'سقي', 'ماء', 'تنقيط', 'رش'], a: 'أفضل وقت للري من <b>4 إلى 8 صباحًا</b> لتقليل البخر. الري بالتنقيط يوفر حتى <b>40٪</b> من الماء مقارنة بالغرقان ويرفع كفاءة استخدام السماد.<br>💡 راقب قراءة EC للمياه وجدول الري حسب نوع التربة والموسم 🚰' },
+  { k: ['قمح', 'حنتة'], a: 'لزيادة إنتاج القمح 🌾:<br>1) اختر صنفًا معتمدًا عالي الإنتاجية.<br>2) المعدل الزراعي الأمثل للتبرع.<br>3) النيتروجين على دفعتين (زراعة + تفريع).<br>4) راقب الصدأ الأصفر واعرض الصورة على أداة التشخيص الذكي عند الشك.' },
+  { k: ['طماطم', 'بندورة'], a: 'الطماطم 🍅 تحتاج نحو 100 وحدة نيتروجين/فدان مع 60 فوسفور و80 بوتاسيوم. راقب العقد الزهري، وتجنب الرطوبة العالية لتفادي اللفحة — جرّب <b>حاسبة التسميد</b> بفئة الطماطم في المختبرات!' },
+  { k: ['سماد', 'تسميد', 'أسمدة', 'اسمدة', 'فدان'], a: 'القاعدة الذهبية: <b>ابدأ بتحليل تربة</b> وليس بالتخمين 🧪. بعدها استخدم <b>حاسبة N-P-K</b> في قسم المختبرات الذكية لتحويل نتيجة التحليل إلى كجم أسمدة تجارية (يوريا/سوبر فوسفات/كبريتات بوتاسيوم) لمساحتك.' },
+  { k: ['مرض', 'بقع', 'بكت', 'فطر', 'آفة', 'افه', 'حشرة'], a: 'لتشخيص أمراض النبات 🔬: صوّر الورقة المصابة بإضاءة طبيعية من مسافة قريبة، ثم ارفعها في <b>أداة التشخيص الذكي</b> وسيعطيك تقريرًا بالمرض وخطة العلاج والوقاية. وللوقاية العامة طبّق الإدارة المتكاملة (IPM): مبيدات حيوية + دورة زراعية + متابعة أسبوعية.' },
+  { k: ['تربة', 'ph', 'بي اتش', 'حموضة', 'قلوية'], a: 'النطاق الأمثل لمعظم المحاصيل <b>pH 6 – 7</b> 👌. إذا كانت تربتك قلوية (>8) أضف الجبس الزراعي أو الكبريت واعتمد التسميد الورقي بالمخلبات، وإذا كانت حمضية استخدم الترويب الزراعي.' },
+  { k: ['دورة', 'كورس', 'مساق', 'دراسة', 'تعلم'], a: 'في <b>المركز الأكاديمي</b> ستجد دورات في 5 تخصصات: علم التربة 🟣، وراثة المحاصيل 🩷، أمراض النبات ❤️، الإنتاج الحيواني 🟠، وهندسة الري 🔵 — كل دورة بفيديو وملخص واختبار سريع. اختر تخصصك وابدأ!' },
+  { k: ['شكرا', 'شكرًا', 'تسلم', 'جزاك'], a: 'العفو! 🌱 سعيد بخدمتك — لا تنسَ تجربة ساحة الاختبارات لتثبيت المعلومة وكسب نقاط XP ⚡' },
+  { k: ['xp', 'نقاط', 'مستوى'], a: 'تجمع <b>10 XP</b> عن كل إجابة صحيحة (+2 مكافأة سرعة)، و<b>20 XP</b> عند إكمال دورة. كل 150 نقطة ترتفع درجة واحدة من: بذرة ناشئة ← مزارع مبتدئ ← فني زراعي ← خبير زراعي ← أسطورة الحقول 🏆' }
+];
+function demoReply(msg) {
+  const m = msg.toLowerCase();
+  for (const item of BOT_KB) if (item.k.some(k => m.includes(k.toLowerCase()))) return item.a;
+  return 'سؤال ممتاز! 🌱 في النسخة التجريبية أجيب من قاعدة معرفة بسيطة — عند ربط <b>Gemini API</b> أو <b>n8n</b> من إعدادات <code>AI_CONFIG</code> ستصبح إجاباتي كاملة الذكاء.<br>جرّب أن تسألني عن: الري، التسميد، النيتروجين، أمراض النبات، أو الدورات المتاحة.';
+}
+/** موجّه الردود: demo → محلي | gemini → واجهة Google | n8n → Webhook خاص */
+async function getAIResponse(msg) {
+  /* 1) Gemini API الحقيقي (فعّله بوضع المفتاح في AI_CONFIG) */
+  if (AI_CONFIG.provider === 'gemini' && AI_CONFIG.geminiApiKey && !AI_CONFIG.geminiApiKey.includes('PASTE_')) {
+    try {
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${AI_CONFIG.geminiModel}:generateContent?key=${encodeURIComponent(AI_CONFIG.geminiApiKey)}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: 'أنت "رفيق الزراعة" مساعد زراعي خبير في منصة AgriLearn. أجب بالعربية بإيجاز وعمليًا مع خطوات قابلة للتطبيق.' }] },
+          contents: [{ role: 'user', parts: [{ text: msg }] }]
+        })
+      });
+      const j = await r.json();
+      const txt = j && j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts && j.candidates[0].content.parts[0].text;
+      if (txt) return txt;
+    } catch (e) { /* سيقع تلقائيًا على الرد التجريبي */ }
+  }
+  /* 2) Webhook الخاص بـ n8n (سير عمل ذكاء اصطناعي عندك) */
+  if (AI_CONFIG.provider === 'n8n' && AI_CONFIG.n8nWebhookUrl && !AI_CONFIG.n8nWebhookUrl.includes('YOUR-N8N')) {
+    try {
+      const r = await fetch(AI_CONFIG.n8nWebhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg }) });
+      const j = await r.json();
+      if (j && j.reply) return j.reply;
+    } catch (e) { /* سيقع تلقائيًا على الرد التجريبي */ }
+  }
+  /* 3) الرد التجريبي المحلي */
+  return demoReply(msg);
+}
+
+const Chat = {
+  open: false,
+  toggle(force) {
+    this.open = force !== undefined ? force : !this.open;
+    const p = $('#chatPanel'), l = $('#chatLauncher');
+    if (this.open) {
+      p.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      l.classList.add('scale-0', 'pointer-events-none');
+      l.classList.remove('chat-pulse');
+      setTimeout(() => $('#chatInput').focus(), 250);
+    } else {
+      p.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      l.classList.remove('scale-0', 'pointer-events-none');
+      l.classList.add('chat-pulse');
+    }
+  },
+  push(who, html) {
+    const wrap = document.createElement('div');
+    wrap.className = 'flex ' + (who === 'me' ? 'justify-end' : 'justify-start');
+    wrap.innerHTML = who === 'me'
+      ? `<div class="bubble-user px-4 py-2.5 max-w-[80%] text-sm font-bold shadow">${html}</div>`
+      : `<div class="flex gap-2 items-end max-w-[88%]">
+           <span class="w-8 h-8 rounded-full btn-primary grid place-items-center text-white text-xs shrink-0"><i class="fa-solid fa-robot"></i></span>
+           <div class="bubble-bot px-4 py-2.5 text-sm font-bold leading-relaxed">${html}</div>
+         </div>`;
+    $('#chatMsgs').appendChild(wrap);
+    $('#chatMsgs').scrollTop = $('#chatMsgs').scrollHeight;
+  },
+  typing(on) {
+    if (on) {
+      const d = document.createElement('div');
+      d.id = 'chatTyping'; d.className = 'flex justify-start';
+      d.innerHTML = `<div class="bubble-bot px-4 py-3 flex gap-1.5 items-center"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
+      $('#chatMsgs').appendChild(d);
+      $('#chatMsgs').scrollTop = $('#chatMsgs').scrollHeight;
+    } else { const e = $('#chatTyping'); if (e) e.remove(); }
+  },
+  renderChips() {
+    $('#chatChips').innerHTML = ['sug1', 'sug2', 'sug3', 'sug4'].map(k => `<button class="chip !text-xs !py-1.5 !px-3 whitespace-nowrap shrink-0" data-sug>${t(k)}</button>`).join('');
+  },
+  async ask(text) {
+    if (!text.trim()) return;
+    this.push('me', esc(text));
+    $('#chatInput').value = '';
+    Sound.play('click');
+    this.typing(true);
+    let reply;
+    try { reply = await getAIResponse(text); }
+    catch (e) { reply = 'عذرًا، تعذر الاتصال بالمساعد الآن — حاول مرة أخرى بعد قليل 🙏'; }
+    await new Promise(r => setTimeout(r, 450));
+    this.typing(false);
+    this.push('bot', reply);
+    Sound.play('click');
+  },
+  init() {
+    $('#chatLauncher').addEventListener('click', () => this.toggle());
+    $('#chatClose').addEventListener('click', () => this.toggle(false));
+    const send = () => this.ask($('#chatInput').value);
+    $('#chatSend').addEventListener('click', send);
+    $('#chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+    $('#chatChips').addEventListener('click', e => { const b = e.target.closest('[data-sug]'); if (b) this.ask(b.textContent); });
+    this.push('bot', t('chat_greet'));
+    this.renderChips();
+  }
+};
+
+/* ==================== الإقلاع العام ==================== */
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme();
+  applySoundIcon();
+  refreshPoints();
+  applyLang();          /* تبني كل شيء: الترجمة + الشريط + الكروت + المجتمع + المحادثة */
+  Diag.init();
+  Chat.init();
+  initNPK();
+  Quiz.updateSetupBest();
+  Quiz.updateChips();
+  showN2Stage('fix');   /* عرض المرحلة الأولى افتراضيًا في دورة النيتروجين */
+});
+</script>
+</body>
+</html>
